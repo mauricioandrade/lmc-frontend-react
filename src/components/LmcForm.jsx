@@ -14,6 +14,9 @@ function LmcForm() {
   const [observacoes, setObservacoes] = useState('');
   const [medicoes, setMedicoes] = useState([]);
   const [vendas, setVendas] = useState([]);
+  
+  // --- ADIÇÃO 1: Estado para Compras ---
+  const [compras, setCompras] = useState([]);
 
   // --- Estados de UI (Feedback) ---
   const [loading, setLoading] = useState(false);
@@ -22,15 +25,13 @@ function LmcForm() {
 
   // --- Efeito de Carregamento Inicial (Produtos) ---
   useEffect(() => {
-    console.log('🔍 Buscando produtos...');
-    
+    // (Logs de console removidos por limpeza)
     api.getProdutos()
       .then(response => {
-        console.log('✅ Sucesso! response.data:', response.data);
         setProdutos(response.data);
       })
       .catch(err => {
-        console.error("❌ Erro ao buscar produtos:", err);
+        console.error("Erro ao buscar produtos:", err);
         setError("Não foi possível carregar os produtos da API.");
       });
   }, []);
@@ -44,6 +45,7 @@ function LmcForm() {
     setBicos([]);
     setMedicoes([]);
     setVendas([]);
+    setCompras([]); // <-- Adicionado: Limpa as compras ao trocar o produto
     setError(null);
     setSuccess(null);
 
@@ -53,7 +55,7 @@ function LmcForm() {
     try {
       const tanquesResponse = await api.getTanquesPorProduto(pid);
       const tanquesData = tanquesResponse.data;
-      setTanques(tanquesData);
+      setTanques(tanquesData); // <-- Salva os tanques do produto selecionado
 
       const medicoesIniciais = tanquesData.map(t => ({
         tanqueId: t.id,
@@ -105,13 +107,39 @@ function LmcForm() {
     setVendas(novasVendas);
   };
 
+  // --- ADIÇÃO 2: Handlers para Compras ---
+  const handleCompraChange = (index, field, value) => {
+    const novasCompras = [...compras];
+    novasCompras[index][field] = value;
+    setCompras(novasCompras);
+  };
+
+  const adicionarCompra = () => {
+    setCompras([
+      ...compras,
+      {
+        tanqueDescargaId: '',
+        numeroDocumentoFiscal: '',
+        volumeRecebido: ''
+      }
+    ]);
+  };
+
+  const removerCompra = (index) => {
+    const novasCompras = compras.filter((_, i) => i !== index);
+    setCompras(novasCompras);
+  };
+  // --- Fim da Adição 2 ---
+
+
   // --- Lógica de Submissão ---
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Previne o reload da página (agora que é um <form>)
     setLoading(true);
     setError(null);
     setSuccess(null);
 
+    // --- ADIÇÃO 3: Adicionar 'compras' ao DTO ---
     const lmcData = {
       data: data,
       produtoId: produtoId,
@@ -128,15 +156,21 @@ function LmcForm() {
         encerranteFechamento: v.encerranteFechamento,
         afericoes: v.afericoes
       })),
-      compras: []
+      compras: compras.map(c => ({ // <-- Adicionado mapeamento
+        tanqueDescargaId: c.tanqueDescargaId,
+        numeroDocumentoFiscal: c.numeroDocumentoFiscal,
+        volumeRecebido: c.volumeRecebido
+      }))
     };
+    // --- Fim da Adição 3 ---
 
     try {
       const response = await api.salvarFolhaLMC(lmcData);
-      setSuccess(`Folha LMC salva com sucesso! (ID: ${response.data.id})`);
+      setSuccess(`Folha LMC salva com sucesso!`);
       setProdutoId('');
       setMedicoes([]);
       setVendas([]);
+      setCompras([]); // <-- Adicionado: Limpa as compras após salvar
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (apiError) {
       console.error("Erro ao salvar LMC:", apiError);
@@ -149,6 +183,7 @@ function LmcForm() {
 
   // --- Renderização (JSX) ---
   return (
+    // 'min-vh-100' etc. são do seu layout, mantidos
     <div className="min-vh-100 d-flex align-items-center justify-content-center py-4 px-3" style={{ 
       backgroundColor: '#0d1117',
       width: '100%',
@@ -157,7 +192,7 @@ function LmcForm() {
     }}>
       <div className="container" style={{ maxWidth: '900px', width: '100%' }}>
         
-        {/* Header */}
+        {/* Header (Seu layout, mantido) */}
         <div className="text-center mb-5">
           <h1 className="display-5 fw-bold mb-2" style={{ color: '#58a6ff' }}>
             ⛽ LMC - Livro de Movimentação de Combustíveis
@@ -167,7 +202,7 @@ function LmcForm() {
           </p>
         </div>
 
-        {/* Alerts */}
+        {/* Alerts (Seu layout, mantido) */}
         {error && (
           <div className="alert alert-dismissible fade show shadow-sm mb-4" role="alert" style={{ backgroundColor: '#da3633', color: '#ffffff', border: 'none' }}>
             <strong>❌ Erro!</strong> {error}
@@ -182,14 +217,15 @@ function LmcForm() {
           </div>
         )}
 
-        {/* Formulário Principal */}
-        <div onSubmit={handleSubmit}>
+        {/* --- CORREÇÃO DE BUG: Trocado <div> por <form> --- */}
+        <form onSubmit={handleSubmit}>
           <div className="card shadow-lg rounded-4 mb-4" style={{ backgroundColor: '#161b22', border: '1px solid #30363d' }}>
             <div className="card-header py-3 rounded-top-4" style={{ backgroundColor: '#1f6feb', border: 'none' }}>
               <h4 className="mb-0 fw-bold text-white">📝 Novo Registro Diário</h4>
             </div>
             
             <div className="card-body p-4">
+              {/* Produto e Data (Seu layout, mantido) */}
               <div className="row g-4 mb-4">
                 <div className="col-md-6">
                   <label htmlFor="produto" className="form-label fw-semibold" style={{ color: '#c9d1d9' }}>
@@ -228,6 +264,7 @@ function LmcForm() {
                 </div>
               </div>
 
+              {/* Loading (Seu layout, mantido) */}
               {loading && (
                 <div className="text-center py-5">
                   <div className="spinner-border" role="status" style={{ width: '3rem', height: '3rem', color: '#58a6ff' }}>
@@ -239,7 +276,7 @@ function LmcForm() {
 
               {produtoId && !loading && (
                 <>
-                  {/* Medição dos Tanques */}
+                  {/* Medição dos Tanques (Seu layout, mantido) */}
                   <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d !important' }}>
                     <h5 className="fw-bold mb-3" style={{ color: '#58a6ff' }}>
                       <span className="badge me-2" style={{ backgroundColor: '#1f6feb' }}>3</span>
@@ -251,6 +288,7 @@ function LmcForm() {
                       <div key={med.tanqueId} className="card mb-3 shadow-sm" style={{ backgroundColor: '#0d1117', border: '1px solid #30363d' }}>
                         <div className="card-body">
                           <div className="row g-3 align-items-end">
+                            {/* ... (inputs de medição - seu layout mantido) ... */}
                             <div className="col-md-4">
                               <label className="form-label fw-semibold small" style={{ color: '#c9d1d9' }}>🛢️ Tanque</label>
                               <input 
@@ -294,10 +332,96 @@ function LmcForm() {
                     ))}
                   </div>
 
-                  {/* Vendas por Bico */}
+
+                  {/* --- ADIÇÃO 4: Seção de Compras --- */}
                   <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d !important' }}>
                     <h5 className="fw-bold mb-3" style={{ color: '#58a6ff' }}>
                       <span className="badge me-2" style={{ backgroundColor: '#1f6feb' }}>4</span>
+                      Recebimentos (Compras)
+                    </h5>
+                    <p className="small mb-3" style={{ color: '#8b949e' }}>Campo 4 do LMC</p>
+                    
+                    {compras.map((compra, index) => (
+                      <div key={index} className="card mb-3 shadow-sm" style={{ backgroundColor: '#0d1117', border: '1px solid #30363d' }}>
+                        <div className="card-body">
+                          <div className="row g-3 align-items-end">
+                            <div className="col-md-4">
+                              <label className="form-label fw-semibold small" style={{ color: '#c9d1d9' }}>Nº Nota Fiscal</label>
+                              <input 
+                                type="text" 
+                                className="form-control"
+                                style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
+                                value={compra.numeroDocumentoFiscal}
+                                onChange={e => handleCompraChange(index, 'numeroDocumentoFiscal', e.target.value)}
+                                required 
+                                placeholder="Nº da NF-e"
+                              />
+                            </div>
+                            <div className="col-md-3">
+                              <label className="form-label fw-semibold small" style={{ color: '#c9d1d9' }}>Tanque Descarga</label>
+                              <select 
+                                className="form-select"
+                                style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
+                                value={compra.tanqueDescargaId}
+                                onChange={e => handleCompraChange(index, 'tanqueDescargaId', e.target.value)}
+                                required
+                              >
+                                <option value="">Selecione...</option>
+                                {/* A lista 'tanques' já está no estado (state) */}
+                                {tanques.map(t => (
+                                  <option key={t.id} value={t.id}>{t.numero}</option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="col-md-3">
+                              <label className="form-label fw-semibold small" style={{ color: '#c9d1d9' }}>Volume Recebido (L)</label>
+                              <input 
+                                type="number" 
+                                step="0.01"
+                                className="form-control" 
+                                style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
+                                value={compra.volumeRecebido}
+                                onChange={e => handleCompraChange(index, 'volumeRecebido', e.target.value)}
+                                required
+                                placeholder="0.00"
+                              />
+                            </div>
+                            <div className="col-md-2">
+                              {/* Botão de remover com seu estilo dark */}
+                              <button 
+                                type="button" 
+                                className="btn btn-sm w-100"
+                                style={{ backgroundColor: '#da3633', color: 'white', border: 'none' }}
+                                onClick={() => removerCompra(index)}
+                              >
+                                Remover
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {/* Botão para adicionar novas compras */}
+                    <div className="text-end mb-3">
+                      <button 
+                        type="button" 
+                        className="btn btn-sm fw-bold"
+                        style={{ color: '#2f81f7', border: '1px solid #2f81f7' }}
+                        onMouseEnter={(e) => { e.target.style.backgroundColor = '#2f81f7'; e.target.style.color = 'white'; }}
+                        onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#2f81f7'; }}
+                        onClick={adicionarCompra}
+                      >
+                        + Adicionar Compra
+                      </button>
+                    </div>
+                  </div>
+                  {/* --- Fim da Adição 4 --- */}
+
+
+                  {/* Vendas por Bico (Seu layout, re-numerado para 5) */}
+                  <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d !important' }}>
+                    <h5 className="fw-bold mb-3" style={{ color: '#58a6ff' }}>
+                      <span className="badge me-2" style={{ backgroundColor: '#1f6feb' }}>5</span>
                       Vendas por Bico
                     </h5>
                     <p className="small mb-3" style={{ color: '#8b949e' }}>Campo 5 do LMC</p>
@@ -305,6 +429,7 @@ function LmcForm() {
                     <div className="row g-3">
                       {vendas.map((venda, index) => (
                         <div key={venda.bicoId} className="col-md-6">
+                          {/* ... (código do seu card de Vendas mantido) ... */}
                           <div className="card shadow-sm h-100" style={{ backgroundColor: '#0d1117', border: '1px solid #30363d' }}>
                             <div className="card-header" style={{ backgroundColor: '#161b22', border: 'none' }}>
                               <h6 className="mb-0 fw-bold" style={{ color: '#c9d1d9' }}>⛽ {venda.nome}</h6>
@@ -370,10 +495,10 @@ function LmcForm() {
                     </div>
                   </div>
 
-                  {/* Observações */}
+                  {/* Observações (Seu layout, re-numerado para 6) */}
                   <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d !important' }}>
                     <h5 className="fw-bold mb-3" style={{ color: '#58a6ff' }}>
-                      <span className="badge me-2" style={{ backgroundColor: '#1f6feb' }}>5</span>
+                      <span className="badge me-2" style={{ backgroundColor: '#1f6feb' }}>6</span>
                       Observações
                     </h5>
                     <p className="small mb-3" style={{ color: '#8b949e' }}>Campo 13 - Justificativas (obrigatório se variação &gt; 0.6%)</p>
@@ -392,11 +517,12 @@ function LmcForm() {
               )}
             </div>
 
+            {/* Botão de Salvar (Seu layout, com tipo "submit" corrigido) */}
             <div className="card-footer border-0 p-4 rounded-bottom-4" style={{ backgroundColor: '#161b22', borderTop: '1px solid #30363d' }}>
               <div className="d-grid">
                 <button 
-                  type="button"
-                  onClick={handleSubmit}
+                  type="submit" // <-- CORRIGIDO (era "button")
+                  // onClick={handleSubmit} // <-- REMOVIDO (desnecessário com type="submit")
                   className="btn btn-lg fw-bold shadow"
                   disabled={!produtoId || loading}
                   style={{ 
@@ -421,9 +547,9 @@ function LmcForm() {
               </div>
             </div>
           </div>
-        </div>
+        </form> {/* --- CORREÇÃO DE BUG: Fechando a tag <form> --- */}
 
-        {/* Footer */}
+        {/* Footer (Seu layout, mantido) */}
         <div className="text-center mt-4">
           <p className="small mb-0" style={{ color: '#8b949e' }}>
             © 2025 Sistema LMC - Desenvolvido com React + Bootstrap
