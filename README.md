@@ -1,16 +1,37 @@
-# React + Vite
+# LMC Front-end
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este projeto é a interface web do ecossistema **LMC**, servindo como front-end para o backend "lmc". Ele oferece uma experiência de usuário responsiva e moderna para acessar os recursos expostos pelo serviço back-end, permitindo que os usuários interajam com as funcionalidades principais de forma intuitiva.
 
-Currently, two official plugins are available:
+## Tecnologias principais
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [React](https://react.dev/) com [Vite](https://vite.dev/) para desenvolvimento rápido e modular.
+- [ESLint](https://eslint.org/) para padronização e qualidade do código.
 
-## React Compiler
+## Executando o projeto
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Instale as dependências:
+   ```bash
+   npm install
+   ```
+2. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
 
-## Expanding the ESLint configuration
+O projeto ficará disponível em [http://localhost:5173](http://localhost:5173) por padrão.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Scripts disponíveis
+
+- `npm run dev`: inicia o servidor de desenvolvimento com recarregamento em tempo real.
+- `npm run build`: gera a versão otimizada para produção.
+- `npm run lint`: executa a verificação de lint para manter a qualidade do código.
+- `npm run preview`: serve localmente a build de produção para testes.
+
+## Estrutura básica
+
+A estrutura principal do projeto está concentrada no diretório `src/`, onde você encontrará os componentes, estilos e configurações relacionadas à interface.
+
+## Contribuindo
+
+Sinta-se à vontade para abrir issues ou enviar pull requests com melhorias. Certifique-se de seguir as práticas de código estabelecidas e validar as alterações com os scripts de lint e build.
+
