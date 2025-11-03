@@ -1,18 +1,15 @@
-// src/App.jsx
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast'; // Adicione esta linha
+import { Toaster } from 'react-hot-toast';
 import Header from './components/Header';
 
 function App() {
   return (
     <>
-      {/* Configuração do Toaster para notificações */}
       <Toaster
         position="top-right"
         reverseOrder={false}
         toastOptions={{
-          // Configurações globais dos toasts
           duration: 4000,
           style: {
             background: '#161b22',
@@ -46,23 +43,18 @@ function App() {
         }}
       />
 
-      {/* Seu layout existente */}
       <div className="container mt-4">
         <div className="row">
           <div className="col-lg-10 col-xl-10 mx-auto">
-            
-            {/* 1. O Header com os links de navegação */}
             <Header />
-            
+
             <main>
-              {/* 2. O React Router renderiza o LmcForm OU o Relatorio aqui */}
               <Outlet />
             </main>
-            
+
             <footer className="mt-5 text-center text-muted">
               <p>&copy; {new Date().getFullYear()} Seu Sistema LMC</p>
             </footer>
-
           </div>
         </div>
       </div>
