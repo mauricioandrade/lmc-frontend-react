@@ -2,10 +2,10 @@
 import React, { useState } from 'react';
 import * as api from '../services/api';
 import { toast } from 'react-hot-toast';
-import ModalMedicao from './ModalMedicao'; // <-- 1. IMPORTE O MODAL
+import ModalMedicao from './ModalMedicao'; 
+import ModalVenda from './ModalVenda'; // <-- 1. IMPORTE O NOVO MODAL
 
-// Componente simples para uma linha (pode ser movido para um arquivo separado)
-// Adaptado para seu estilo Bootstrap Dark
+// ... (Componente ItemLinha) ...
 const ItemLinha = ({ label, details, onEdit, onDelete }) => (
     <div className="d-flex justify-content-between align-items-center p-2 mb-2 rounded" style={{ backgroundColor: '#0d1117', border: '1px solid #30363d' }}>
         <span style={{ color: '#c9d1d9' }}>
@@ -18,56 +18,51 @@ const ItemLinha = ({ label, details, onEdit, onDelete }) => (
     </div>
 );
 
+
 function AreaDeEdicao({ folha, tanques, bicos, onAtualizar }) {
   
-  // --- 2. ESTADOS PARA CONTROLAR OS MODAIS ---
   const [showModal, setShowModal] = useState(false);
   const [editandoItem, setEditandoItem] = useState(null);
   const [tipoModal, setTipoModal] = useState(''); // 'medicoes', 'compras', 'vendas'
 
   const handleExcluir = async (tipo, id) => {
+    // ... (seu método de excluir) ...
     if (!window.confirm(`Tem certeza que deseja excluir este item (ID: ${id})?`)) {
         return;
     }
-    
     try {
         switch (tipo) {
-            case 'medicoes':
-                await api.deletarMedicao(id);
-                break;
-            case 'compras':
-                await api.deletarCompra(id);
-                break;
-            case 'vendas':
-                await api.deletarVenda(id);
-                break;
-            default:
-                throw new Error("Tipo de exclusão desconhecido");
+            case 'medicoes': await api.deletarMedicao(id); break;
+            case 'compras': await api.deletarCompra(id); break;
+            case 'vendas': await api.deletarVenda(id); break;
+            default: throw new Error("Tipo de exclusão desconhecido");
         }
-        
         toast.success("Item excluído com sucesso!");
-        onAtualizar(); // Recarrega os dados na página principal
+        onAtualizar(); 
     } catch (error) {
         console.error("Erro ao excluir:", error);
         toast.error("Falha ao excluir o item.");
     }
   };
 
-  // --- 3. ATUALIZA OS HANDLERS PARA ABRIR O MODAL ---
+  // --- 2. ATUALIZA O HANDLER PARA INCLUIR 'vendas' ---
   const handleEditar = (item, tipo) => {
     setEditandoItem(item);
     setTipoModal(tipo);
-    if (tipo === 'medicoes') {
+    
+    if (tipo === 'medicoes' || tipo === 'vendas') { // <-- MUDANÇA AQUI
         setShowModal(true); // Abre o modal
     } else {
         toast.error(`Função "Editar ${tipo}" ainda não implementada.`);
     }
   };
   
+  // --- 3. ATUALIZA O HANDLER PARA INCLUIR 'vendas' ---
   const handleAdicionar = (tipo) => {
     setEditandoItem(null); // 'null' significa que é um item novo
     setTipoModal(tipo);
-    if (tipo === 'medicoes') {
+
+    if (tipo === 'medicoes' || tipo === 'vendas') { // <-- MUDANÇA AQUI
         setShowModal(true); // Abre o modal
     } else {
         toast.error(`Função "Adicionar ${tipo}" ainda não implementada.`);
@@ -80,33 +75,32 @@ function AreaDeEdicao({ folha, tanques, bicos, onAtualizar }) {
     setTipoModal('');
   }
 
-  // Estilo do botão de adicionar
+  // ... (Estilo btnAdicionarStyle) ...
   const btnAdicionarStyle = { 
     color: '#2f81f7', 
     border: '1px solid #2f81f7',
     backgroundColor: 'transparent'
   };
 
+
   return (
     <div className="area-edicao">
       
-      {/* Bloco de Medições */}
+      {/* Bloco de Medições (sem mudanças) */}
       <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d !important' }}>
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className="fw-bold mb-0" style={{ color: '#58a6ff' }}>Medições dos Tanques</h5>
-          <button 
-            onClick={() => handleAdicionar('medicoes')} 
-            className="btn btn-sm fw-bold" 
-            style={btnAdicionarStyle}
+          <button onClick={() => handleAdicionar('medicoes')} className="btn btn-sm fw-bold" style={btnAdicionarStyle}
             onMouseEnter={(e) => { e.target.style.backgroundColor = '#2f81f7'; e.target.style.color = 'white'; }}
             onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#2f81f7'; }}
-          >+ Adicionar</button>
+          >
+            + Adicionar
+          </button>
         </div>
-        
         {folha.medicoesTanque.map((med) => (
           <ItemLinha
               key={med.id}
-              label={`Tanque ${med.tanque.numero}:`}
+              label={`Tanque ${med.tanque?.numero || 'Inválido'}:`}
               details={`${med.estoqueFechamentoFisico} L (Abertura: ${med.estoqueAbertura} L)`}
               onEdit={() => handleEditar(med, 'medicoes')}
               onDelete={() => handleExcluir('medicoes', med.id)}
@@ -114,49 +108,45 @@ function AreaDeEdicao({ folha, tanques, bicos, onAtualizar }) {
         ))}
       </div>
 
-      {/* Bloco de Compras */}
+      {/* Bloco de Compras (sem mudanças, ainda mostra toast) */}
       <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d !important' }}>
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className="fw-bold mb-0" style={{ color: '#58a6ff' }}>Recebimentos (Compras)</h5>
-          <button 
-            onClick={() => handleAdicionar('compras')} 
-            className="btn btn-sm fw-bold" 
-            style={btnAdicionarStyle}
+          <button onClick={() => handleAdicionar('compras')} className="btn btn-sm fw-bold" style={btnAdicionarStyle}
             onMouseEnter={(e) => { e.target.style.backgroundColor = '#2f81f7'; e.target.style.color = 'white'; }}
             onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#2f81f7'; }}
-          >+ Adicionar</button>
+          >
+            + Adicionar
+          </button>
         </div>
-        
         {folha.compras.length === 0 && <p className="small" style={{ color: '#8b949e' }}>Nenhuma compra registrada.</p>}
         {folha.compras.map((compra) => (
           <ItemLinha
               key={compra.id}
               label={`NF ${compra.numeroDocumentoFiscal}:`}
-              details={`${compra.volumeRecebido} L`}
+              details={`${compra.volumeRecebido} L (Tanque: ${compra.tanqueDescarga?.numero || 'N/A'})`}
               onEdit={() => handleEditar(compra, 'compras')}
               onDelete={() => handleExcluir('compras', compra.id)}
           />
         ))}
       </div>
 
-      {/* Bloco de Vendas */}
+      {/* Bloco de Vendas (sem mudanças, os handlers foram atualizados) */}
       <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d !important' }}>
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className="fw-bold mb-0" style={{ color: '#58a6ff' }}>Vendas por Bico</h5>
-          <button 
-            onClick={() => handleAdicionar('vendas')} 
-            className="btn btn-sm fw-bold" 
-            style={btnAdicionarStyle}
+          <button onClick={() => handleAdicionar('vendas')} className="btn btn-sm fw-bold" style={btnAdicionarStyle}
             onMouseEnter={(e) => { e.target.style.backgroundColor = '#2f81f7'; e.target.style.color = 'white'; }}
             onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#2f81f7'; }}
-          >+ Adicionar</button>
+          >
+            + Adicionar
+          </button>
         </div>
-
         {folha.vendasBico.length === 0 && <p className="small" style={{ color: '#8b949e' }}>Nenhuma venda registrada.</p>}
         {folha.vendasBico.map((venda) => (
           <ItemLinha
               key={venda.id}
-              label={`Bico ${venda.bico.numero}:`}
+              label={`Bico ${venda.bico?.numero || 'Inválido'}:`}
               details={`${venda.vendasBico} L (Enc: ${venda.encerranteFechamento})`}
               onEdit={() => handleEditar(venda, 'vendas')}
               onDelete={() => handleExcluir('vendas', venda.id)}
@@ -164,16 +154,15 @@ function AreaDeEdicao({ folha, tanques, bicos, onAtualizar }) {
         ))}
       </div>
 
-      {/* Bloco de Observações */}
+      {/* Bloco de Observações (sem mudanças) */}
       <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d !important' }}>
-         <h5 className="fw-bold mb-3" style={{ color: '#58a6ff' }}>Observações</h5>
+         <h5 className="fw-bold mb-0" style={{ color: '#58a6ff' }}>Observações</h5>
          <textarea 
-           className="form-control shadow-sm" 
+           className="form-control shadow-sm mt-3" 
            rows="4"
            style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
-           defaultValue={folha.observacoes || ''} // Usar defaultValue para leitura/edição
+           defaultValue={folha.observacoes || ''} 
            placeholder="Justificativas para variações de estoque..."
-           // TODO: Adicionar um botão "Salvar Observações" que chama um endpoint PUT
          ></textarea>
          <button 
            onClick={() => toast.error('Salvar observações não implementado.')} 
@@ -183,16 +172,29 @@ function AreaDeEdicao({ folha, tanques, bicos, onAtualizar }) {
          </button>
       </div>
 
-       {/* --- 4. RENDERIZAÇÃO CONDICIONAL DO MODAL --- */}
+       {/* --- 4. RENDERIZAÇÃO CONDICIONAL DOS MODAIS --- */}
        {showModal && tipoModal === 'medicoes' && (
          <ModalMedicao 
-           item={editandoItem} // Passa o item para edição (ou null para adição)
+           item={editandoItem} 
            folhaId={folha.id}
            tanquesDisponiveis={tanques}
            onClose={handleCloseModal}
            onSalvar={() => {
-             handleCloseModal(); // Fecha o modal
-             onAtualizar();      // Recarrega a página
+             handleCloseModal(); 
+             onAtualizar();      
+           }} 
+         />
+       )}
+
+       {showModal && tipoModal === 'vendas' && (
+         <ModalVenda 
+           item={editandoItem} 
+           folhaId={folha.id}
+           bicosDisponiveis={bicos}
+           onClose={handleCloseModal}
+           onSalvar={() => {
+             handleCloseModal(); 
+             onAtualizar();      
            }} 
          />
        )}
@@ -200,7 +202,6 @@ function AreaDeEdicao({ folha, tanques, bicos, onAtualizar }) {
        {/* {showModal && tipoModal === 'compras' && (
          <ModalCompra ... />
        )} */}
-
     </div>
   );
 }
