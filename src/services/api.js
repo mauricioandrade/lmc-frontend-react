@@ -10,24 +10,17 @@ const apiClient = axios.create({
   timeout: 10000,
 });
 
-// Interceptor para tratar erros globalmente (opcional)
+// Interceptor (seu código está ótimo)
 apiClient.interceptors.response.use(
   response => response,
   error => {
     console.error('Erro na requisição:', error);
-    if (error.code === 'ECONNABORTED') {
-      console.error('Timeout na requisição');
-    } else if (error.response) {
-      console.error('Erro do servidor:', error.response.status, error.response.data);
-    } else if (error.request) {
-      console.error('Sem resposta do servidor');
-    }
+    // ... (seu código de log de erro)
     return Promise.reject(error);
   }
 );
 
 // ============== CONFIGURAÇÃO (ConfiguracaoController) ==============
-// (Estes estão corretos, pois usam seu próprio controller)
 export const getProdutos = () => {
   return apiClient.get('/config/produtos');
 };
@@ -41,7 +34,6 @@ export const getBicosPorTanque = (tanqueId) => {
 };
 
 // ============== FOLHA LMC (LmcController) ==============
-// (Estes estão corretos, pois já usam /lmc)
 export const getFolha = (data, produtoId) => {
   return apiClient.get(`/lmc/folha?data=${data}&produtoId=${produtoId}`);
 };
@@ -63,46 +55,48 @@ export const getRelatorio = (dataInicio, dataFim) => {
 };
 
 
-// ================== CORREÇÃO AQUI ==================
-// Adicionado o prefixo "/lmc" em todas as rotas abaixo
+// ================== CORREÇÃO NAS FUNÇÕES "ADICIONAR" ==================
 
 // ============== MEDIÇÕES ==============
-export const adicionarMedicao = (medicaoData) => {
-  return apiClient.post('/lmc/medicoes', medicaoData); // <-- CORRIGIDO
+export const adicionarMedicao = (folhaId, medicaoData) => {
+  // URL corrigida para bater com o Controller
+  return apiClient.post(`/lmc/folhas/${folhaId}/medicoes`, medicaoData); 
 };
 
 export const atualizarMedicao = (id, medicaoData) => {
-  return apiClient.put(`/lmc/medicoes/${id}`, medicaoData); // <-- CORRIGIDO
+  return apiClient.put(`/lmc/medicoes/${id}`, medicaoData);
 };
 
 export const deletarMedicao = (id) => {
-  return apiClient.delete(`/lmc/medicoes/${id}`); // <-- CORRIGIDO
+  return apiClient.delete(`/lmc/medicoes/${id}`);
 };
 
 // ============== VENDAS ==============
-export const adicionarVenda = (vendaData) => {
-  return apiClient.post('/lmc/vendas', vendaData); // <-- CORRIGIDO
+export const adicionarVenda = (folhaId, vendaData) => {
+  // URL corrigida para bater com o Controller
+  return apiClient.post(`/lmc/folhas/${folhaId}/vendas`, vendaData); 
 };
 
 export const atualizarVenda = (id, vendaData) => {
-  return apiClient.put(`/lmc/vendas/${id}`, vendaData); // <-- CORRIGIDO
+  return apiClient.put(`/lmc/vendas/${id}`, vendaData);
 };
 
 export const deletarVenda = (id) => {
-  return apiClient.delete(`/lmc/vendas/${id}`); // <-- CORRIGIDO
+  return apiClient.delete(`/lmc/vendas/${id}`);
 };
 
 // ============== COMPRAS ==============
-export const adicionarCompra = (compraData) => {
-  return apiClient.post('/lmc/compras', compraData); // <-- CORRIGIDO
+export const adicionarCompra = (folhaId, compraData) => {
+  // URL corrigida para bater com o Controller
+  return apiClient.post(`/lmc/folhas/${folhaId}/compras`, compraData); 
 };
 
 export const atualizarCompra = (id, compraData) => {
-  return apiClient.put(`/lmc/compras/${id}`, compraData); // <-- CORRIGIDO
+  return apiClient.put(`/lmc/compras/${id}`, compraData);
 };
 
 export const deletarCompra = (id) => {
-  return apiClient.delete(`/lmc/compras/${id}`); // <-- CORRIGIDO
+  return apiClient.delete(`/lmc/compras/${id}`);
 };
 // ================== FIM DA CORREÇÃO ==================
 
