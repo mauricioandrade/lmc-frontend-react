@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import * as api from '../services/api';
 import { toast } from 'react-hot-toast';
 import ModalMedicao from './ModalMedicao'; 
-import ModalVenda from './ModalVenda'; // <-- 1. IMPORTE O NOVO MODAL
+import ModalVenda from './ModalVenda'; 
+import ModalCompra from './ModalCompra'; 
 
 // ... (Componente ItemLinha) ...
 const ItemLinha = ({ label, details, onEdit, onDelete }) => (
@@ -24,6 +25,11 @@ function AreaDeEdicao({ folha, tanques, bicos, onAtualizar }) {
   const [showModal, setShowModal] = useState(false);
   const [editandoItem, setEditandoItem] = useState(null);
   const [tipoModal, setTipoModal] = useState(''); // 'medicoes', 'compras', 'vendas'
+  
+  // --- 1. ESTADO PARA OBSERVAÇÕES E LOADING DO BOTÃO ---
+  const [observacoes, setObservacoes] = useState(folha.observacoes || '');
+  const [savingObs, setSavingObs] = useState(false);
+
 
   const handleExcluir = async (tipo, id) => {
     // ... (seu método de excluir) ...
@@ -45,36 +51,35 @@ function AreaDeEdicao({ folha, tanques, bicos, onAtualizar }) {
     }
   };
 
-  // --- 2. ATUALIZA O HANDLER PARA INCLUIR 'vendas' ---
   const handleEditar = (item, tipo) => {
+    // ... (seu método de editar) ...
     setEditandoItem(item);
     setTipoModal(tipo);
-    
-    if (tipo === 'medicoes' || tipo === 'vendas') { // <-- MUDANÇA AQUI
-        setShowModal(true); // Abre o modal
+    if (tipo === 'medicoes' || tipo === 'vendas' || tipo === 'compras') { 
+        setShowModal(true); 
     } else {
         toast.error(`Função "Editar ${tipo}" ainda não implementada.`);
     }
   };
   
-  // --- 3. ATUALIZA O HANDLER PARA INCLUIR 'vendas' ---
   const handleAdicionar = (tipo) => {
-    setEditandoItem(null); // 'null' significa que é um item novo
+    // ... (seu método de adicionar) ...
+    setEditandoItem(null); 
     setTipoModal(tipo);
-
-    if (tipo === 'medicoes' || tipo === 'vendas') { // <-- MUDANÇA AQUI
-        setShowModal(true); // Abre o modal
+    if (tipo === 'medicoes' || tipo === 'vendas' || tipo === 'compras') { 
+        setShowModal(true); 
     } else {
         toast.error(`Função "Adicionar ${tipo}" ainda não implementada.`);
     }
   }
 
   const handleCloseModal = () => {
+    // ... (seu método de fechar modal) ...
     setShowModal(false);
     setEditandoItem(null);
     setTipoModal('');
   }
-
+  
   // ... (Estilo btnAdicionarStyle) ...
   const btnAdicionarStyle = { 
     color: '#2f81f7', 
@@ -82,12 +87,29 @@ function AreaDeEdicao({ folha, tanques, bicos, onAtualizar }) {
     backgroundColor: 'transparent'
   };
 
+  // --- 2. NOVA FUNÇÃO PARA SALVAR OBSERVAÇÕES ---
+  const handleSalvarObservacoes = async () => {
+    setSavingObs(true);
+    try {
+      // Chama a nova função da API
+      await api.atualizarObservacoes(folha.id, observacoes);
+      toast.success("Observações salvas com sucesso!");
+      // Opcional: recarregar a folha inteira caso a validação de 0.6% mude algo
+      // onAtualizar(); 
+    } catch (error) {
+      console.error("Erro ao salvar observações:", error);
+      toast.error(error.response?.data?.message || "Falha ao salvar observações.");
+    } finally {
+      setSavingObs(false);
+    }
+  };
 
   return (
     <div className="area-edicao">
       
       {/* Bloco de Medições (sem mudanças) */}
       <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d !important' }}>
+        {/* ... (código do bloco de medições) ... */}
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className="fw-bold mb-0" style={{ color: '#58a6ff' }}>Medições dos Tanques</h5>
           <button onClick={() => handleAdicionar('medicoes')} className="btn btn-sm fw-bold" style={btnAdicionarStyle}
@@ -108,8 +130,9 @@ function AreaDeEdicao({ folha, tanques, bicos, onAtualizar }) {
         ))}
       </div>
 
-      {/* Bloco de Compras (sem mudanças, ainda mostra toast) */}
+      {/* Bloco de Compras (sem mudanças) */}
       <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d !important' }}>
+        {/* ... (código do bloco de compras) ... */}
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className="fw-bold mb-0" style={{ color: '#58a6ff' }}>Recebimentos (Compras)</h5>
           <button onClick={() => handleAdicionar('compras')} className="btn btn-sm fw-bold" style={btnAdicionarStyle}
@@ -131,8 +154,9 @@ function AreaDeEdicao({ folha, tanques, bicos, onAtualizar }) {
         ))}
       </div>
 
-      {/* Bloco de Vendas (sem mudanças, os handlers foram atualizados) */}
+      {/* Bloco de Vendas (sem mudanças) */}
       <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d !important' }}>
+        {/* ... (código do bloco de vendas) ... */}
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className="fw-bold mb-0" style={{ color: '#58a6ff' }}>Vendas por Bico</h5>
           <button onClick={() => handleAdicionar('vendas')} className="btn btn-sm fw-bold" style={btnAdicionarStyle}
@@ -154,25 +178,27 @@ function AreaDeEdicao({ folha, tanques, bicos, onAtualizar }) {
         ))}
       </div>
 
-      {/* Bloco de Observações (sem mudanças) */}
+      {/* --- 3. BLOCO DE OBSERVAÇÕES ATUALIZADO --- */}
       <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d !important' }}>
          <h5 className="fw-bold mb-0" style={{ color: '#58a6ff' }}>Observações</h5>
          <textarea 
            className="form-control shadow-sm mt-3" 
            rows="4"
            style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
-           defaultValue={folha.observacoes || ''} 
+           value={observacoes} // <-- MUDANÇA: Controlado pelo state
+           onChange={(e) => setObservacoes(e.target.value)} // <-- MUDANÇA: Atualiza o state
            placeholder="Justificativas para variações de estoque..."
          ></textarea>
          <button 
-           onClick={() => toast.error('Salvar observações não implementado.')} 
+           onClick={handleSalvarObservacoes} // <-- MUDANÇA: Chama o handler
            className="btn btn-sm btn-primary mt-2"
+           disabled={savingObs} // <-- MUDANÇA: Desabilita ao salvar
          >
-           Salvar Observações
+           {savingObs ? 'Salvando...' : 'Salvar Observações'}
          </button>
       </div>
 
-       {/* --- 4. RENDERIZAÇÃO CONDICIONAL DOS MODAIS --- */}
+       {/* --- 4. RENDERIZAÇÃO CONDICIONAL DOS MODAIS (Sem mudanças) --- */}
        {showModal && tipoModal === 'medicoes' && (
          <ModalMedicao 
            item={editandoItem} 
@@ -199,9 +225,18 @@ function AreaDeEdicao({ folha, tanques, bicos, onAtualizar }) {
          />
        )}
 
-       {/* {showModal && tipoModal === 'compras' && (
-         <ModalCompra ... />
-       )} */}
+       {showModal && tipoModal === 'compras' && (
+         <ModalCompra 
+           item={editandoItem} 
+           folhaId={folha.id}
+           tanquesDisponiveis={tanques} 
+           onClose={handleCloseModal}
+           onSalvar={() => {
+             handleCloseModal(); 
+             onAtualizar();      
+           }} 
+         />
+       )}
     </div>
   );
 }

@@ -55,11 +55,8 @@ export const getRelatorio = (dataInicio, dataFim) => {
 };
 
 
-// ================== CORREÇÃO NAS FUNÇÕES "ADICIONAR" ==================
-
 // ============== MEDIÇÕES ==============
 export const adicionarMedicao = (folhaId, medicaoData) => {
-  // URL corrigida para bater com o Controller
   return apiClient.post(`/lmc/folhas/${folhaId}/medicoes`, medicaoData); 
 };
 
@@ -73,7 +70,6 @@ export const deletarMedicao = (id) => {
 
 // ============== VENDAS ==============
 export const adicionarVenda = (folhaId, vendaData) => {
-  // URL corrigida para bater com o Controller
   return apiClient.post(`/lmc/folhas/${folhaId}/vendas`, vendaData); 
 };
 
@@ -87,7 +83,6 @@ export const deletarVenda = (id) => {
 
 // ============== COMPRAS ==============
 export const adicionarCompra = (folhaId, compraData) => {
-  // URL corrigida para bater com o Controller
   return apiClient.post(`/lmc/folhas/${folhaId}/compras`, compraData); 
 };
 
@@ -98,6 +93,13 @@ export const atualizarCompra = (id, compraData) => {
 export const deletarCompra = (id) => {
   return apiClient.delete(`/lmc/compras/${id}`);
 };
-// ================== FIM DA CORREÇÃO ==================
+
+// --- NOVO MÉTODO ADICIONADO ---
+export const atualizarObservacoes = (folhaId, observacoesTexto) => {
+  // Envia no formato que o Controller espera: {"observacoes": "texto..."}
+  const data = { observacoes: observacoesTexto };
+  return apiClient.put(`/lmc/folha/${folhaId}/observacoes`, data);
+};
+// --- FIM DA MUDANÇA ---
 
 export default apiClient;
