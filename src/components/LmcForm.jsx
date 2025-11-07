@@ -37,6 +37,7 @@ function LmcForm() {
 
   // --- Efeito de Busca (Lógica Principal) ---
   useEffect(() => {
+    // 1. Função para buscar os tanques/bicos (necessário para ambos os modos)
     const fetchPrerequisitos = async (pid) => {
       try {
         const tanquesResponse = await api.getTanquesPorProduto(pid);
@@ -44,7 +45,9 @@ function LmcForm() {
         setTanques(tanquesData);
 
         let todosBicos = [];
-        for (const tanque of tanquesData) {
+        // --- CORREÇÃO DE BUG (Filtro para tanques nulos) ---
+        const tanquesValidos = tanquesData.filter(t => t.id != null);
+        for (const tanque of tanquesValidos) {
           const bicosResponse = await api.getBicosPorTanque(tanque.id);
           const bicosComTanque = bicosResponse.data.map(b => ({
             ...b,
@@ -56,10 +59,11 @@ function LmcForm() {
       } catch (err) {
         console.error("Erro ao buscar tanques/bicos:", err);
         setError("Não foi possível carregar os tanques e bicos.");
-        throw err;
+        throw err; // Propaga o erro
       }
     };
     
+    // 2. Função para buscar a folha LMC (para ver se é "Criar" ou "Editar")
     const fetchFolha = async () => {
       if (!produtoId || !data) {
         setFolhaCarregada(null);
@@ -95,21 +99,28 @@ function LmcForm() {
 
   const handleAtualizacao = () => {
     toast.success('Dados atualizados!');
+    // Força o useEffect a rodar novamente
     const pid = produtoId;
     const currentData = data;
     setProdutoId('');
-    setData('');
+    setData(''); // Limpa para forçar a mudança de estado
     setTimeout(() => {
       setData(currentData);
       setProdutoId(pid);
-    }, 10);
+    }, 10); // Um pequeno delay garante a re-renderização
   };
   
   return (
     <div className="min-vh-100 d-flex align-items-center justify-content-center py-4 px-3" 
-         style={{ background: 'linear-gradient(135deg, #0d1117 0%, #161b22 100%)' }}>
+         style={{ 
+           backgroundColor: '#0d1117', // Corrigido
+           width: '100%',
+           margin: 0,
+           padding: '2rem 1rem'
+         }}>
       <div className="container" style={{ maxWidth: '900px', width: '100%' }}>
         
+        {/* Header */}
         <div className="text-center mb-5">
           <h1 className="display-5 fw-bold mb-2" style={{ color: '#58a6ff' }}>
             📊 Sistema LMC
@@ -119,6 +130,7 @@ function LmcForm() {
           </p>
         </div>
 
+        {/* Alerts Globais */}
         {error && (
           <div className="alert alert-danger alert-dismissible fade show shadow-sm mb-4" 
                style={{ backgroundColor: '#3c1f1f', borderColor: '#8b3838', color: '#ff7b7b' }}>
@@ -139,6 +151,7 @@ function LmcForm() {
           </div>
         )}
 
+        {/* Card Principal */}
         <div className="card shadow-lg rounded-4 mb-4" 
              style={{ backgroundColor: '#161b22', border: '1px solid #30363d' }}>
           <div className="card-header py-3 rounded-top-4" 
@@ -149,6 +162,7 @@ function LmcForm() {
           </div>
           
           <div className="card-body p-4">
+            {/* Seletores Principais (Produto e Data) */}
             <div className="row g-4 mb-4">
               <div className="col-md-6">
                 <label htmlFor="produto" className="form-label fw-semibold" 
@@ -195,6 +209,7 @@ function LmcForm() {
               </div>
             </div>
             
+            {/* Loading */}
             {loading && (
               <div className="text-center py-5">
                 <div className="spinner-border" style={{ color: '#58a6ff' }} role="status">
@@ -203,6 +218,7 @@ function LmcForm() {
               </div>
             )}
 
+            {/* Renderização Condicional */}
             {!loading && !error && produtoId && data && (
               folhaCarregada ? (
                 <AreaDeEdicao 
@@ -223,7 +239,8 @@ function LmcForm() {
             )}
           </div>
         </div>
-  
+ 
+        {/* Footer */}
         <div className="text-center mt-4">
           <p className="small mb-0" style={{ color: '#8b949e' }}>
             © 2024 Sistema LMC - Todos os direitos reservados
