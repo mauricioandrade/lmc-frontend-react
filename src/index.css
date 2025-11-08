@@ -103,11 +103,24 @@ button:disabled {
   box-shadow: none;
 }
 
+
 .btn {
   border-radius: 12px;
   font-weight: 600;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   box-shadow: 0 12px 26px rgba(2, 132, 199, 0.2);
+}
+
+.btn-link {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.btn-link:focus,
+.btn-link:active {
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .btn:hover {
