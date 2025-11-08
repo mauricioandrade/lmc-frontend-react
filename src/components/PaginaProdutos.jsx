@@ -1,12 +1,8 @@
-// src/components/PaginaProdutos.jsx
 import React, { useState, useEffect } from 'react';
 import * as api from '../services/api';
 import { toast } from 'react-hot-toast';
 
-// --- Componente Modal ---
-// Um modal genérico para Adicionar ou Editar um Produto
 const ModalProduto = ({ item, onClose, onSalvar }) => {
-    // 'item' é o produto para editar, ou null para criar
     const [nome, setNome] = useState(item ? item.nome : '');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -17,15 +13,15 @@ const ModalProduto = ({ item, onClose, onSalvar }) => {
         setError(null);
 
         const produtoData = {
-            id: item ? item.id : null, // Envia o ID se for edição
+            id: item ? item.id : null,
             nome: nome
         };
 
         try {
             await api.salvarProduto(produtoData);
             toast.success(`Produto ${item ? 'atualizado' : 'criado'} com sucesso!`);
-            onSalvar(); // Recarrega a lista no componente pai
-            onClose();  // Fecha o modal
+            onSalvar();
+            onClose();
         } catch (error) {
             console.error("Erro ao salvar produto:", error);
             setError(error.response?.data?.message || "Falha ao salvar produto.");
@@ -34,39 +30,38 @@ const ModalProduto = ({ item, onClose, onSalvar }) => {
         }
     };
 
-    // Estilo do modal (você pode criar um componente Modal separado depois)
     const modalOverlayStyle = {
         position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-        backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', 
+        backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex',
         alignItems: 'center', justifyContent: 'center', zIndex: 1050
     };
 
     return (
         <div style={modalOverlayStyle} onClick={onClose}>
-            <div 
-                className="card shadow-lg rounded-4" 
+            <div
+                className="card shadow-lg rounded-4"
                 style={{ backgroundColor: '#161b22', border: '1px solid #30363d', width: '500px' }}
-                onClick={e => e.stopPropagation()} 
+                onClick={e => e.stopPropagation()}
             >
                 <div className="card-header py-3" style={{ backgroundColor: '#1f6feb', border: 'none' }}>
                     <h4 className="mb-0 fw-bold text-white">
                         {item ? 'Editar Produto' : 'Adicionar Produto'}
                     </h4>
                 </div>
-                
+
                 <form onSubmit={handleSubmit}>
                     <div className="card-body p-4">
                         {error && <div className="alert alert-danger">{error}</div>}
-                        
+
                         <div className="mb-3">
                             <label className="form-label fw-semibold small" style={{ color: '#c9d1d9' }}>Nome do Produto</label>
-                            <input 
+                            <input
                                 name="nome"
                                 type="text" className="form-control"
                                 style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                                 value={nome}
                                 onChange={(e) => setNome(e.target.value)}
-                                required 
+                                required
                                 placeholder="Ex: Gasolina Aditivada"
                             />
                         </div>
@@ -88,17 +83,14 @@ const ModalProduto = ({ item, onClose, onSalvar }) => {
 };
 
 
-// --- Componente Principal da Página ---
 function PaginaProdutos() {
     const [produtos, setProdutos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Controle do Modal
     const [showModal, setShowModal] = useState(false);
-    const [produtoEmEdicao, setProdutoEmEdicao] = useState(null); // null = Adicionar, (objeto) = Editar
+    const [produtoEmEdicao, setProdutoEmEdicao] = useState(null);
 
-    // Função para carregar os dados
     const fetchProdutos = () => {
         setLoading(true);
         api.getProdutos()
@@ -115,19 +107,17 @@ function PaginaProdutos() {
             });
     };
 
-    // Carrega os dados quando o componente é montado
     useEffect(() => {
         fetchProdutos();
     }, []);
 
-    // Handlers do CRUD
     const handleAdicionar = () => {
-        setProdutoEmEdicao(null); // 'null' significa que é um novo produto
+        setProdutoEmEdicao(null);
         setShowModal(true);
     };
 
     const handleEditar = (produto) => {
-        setProdutoEmEdicao(produto); // Passa o produto para o modal
+        setProdutoEmEdicao(produto);
         setShowModal(true);
     };
 
@@ -138,28 +128,27 @@ function PaginaProdutos() {
         try {
             await api.deletarProduto(id);
             toast.success("Produto excluído com sucesso!");
-            fetchProdutos(); // Recarrega a lista
+            fetchProdutos();
         } catch (error) {
             console.error("Erro ao deletar produto:", error);
             toast.error(error.response?.data?.message || "Falha ao excluir produto.");
         }
     };
 
-    // Estilo do botão de adicionar
-    const btnAdicionarStyle = { 
-        color: '#2f81f7', 
+    const btnAdicionarStyle = {
+        color: '#2f81f7',
         border: '1px solid #2f81f7',
         backgroundColor: 'transparent'
     };
 
     return (
         <div className="container" style={{ maxWidth: '900px', width: '100%', color: '#c9d1d9', paddingTop: '2rem' }}>
-            
+
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2 style={{ color: '#58a6ff' }}>Gerenciamento de Produtos</h2>
-                <button 
-                    onClick={handleAdicionar} 
-                    className="btn btn-sm fw-bold" 
+                <button
+                    onClick={handleAdicionar}
+                    className="btn btn-sm fw-bold"
                     style={btnAdicionarStyle}
                     onMouseEnter={(e) => { e.target.style.backgroundColor = '#2f81f7'; e.target.style.color = 'white'; }}
                     onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#2f81f7'; }}
@@ -193,16 +182,16 @@ function PaginaProdutos() {
                                         <td style={{ verticalAlign: 'middle', padding: '1rem' }}>{produto.id}</td>
                                         <td style={{ verticalAlign: 'middle', padding: '1rem' }}>{produto.nome}</td>
                                         <td style={{ verticalAlign: 'middle', padding: '1rem' }}>
-                                            <button 
-                                                onClick={() => handleEditar(produto)} 
-                                                className="btn btn-sm btn-link" 
-                                                style={{ color: '#58a6ff', textDecoration: 'none' }} 
+                                            <button
+                                                onClick={() => handleEditar(produto)}
+                                                className="btn btn-sm btn-link"
+                                                style={{ color: '#58a6ff', textDecoration: 'none' }}
                                                 title="Editar"
                                             >✏️</button>
-                                            <button 
-                                                onClick={() => handleDeletar(produto.id)} 
-                                                className="btn btn-sm btn-link" 
-                                                style={{ color: '#da3633', textDecoration: 'none' }} 
+                                            <button
+                                                onClick={() => handleDeletar(produto.id)}
+                                                className="btn btn-sm btn-link"
+                                                style={{ color: '#da3633', textDecoration: 'none' }}
                                                 title="Excluir"
                                             >🗑️</button>
                                         </td>
@@ -214,14 +203,14 @@ function PaginaProdutos() {
                 </div>
             )}
 
-            {/* --- Renderização Condicional do Modal --- */}
+            
             {showModal && (
                 <ModalProduto
                     item={produtoEmEdicao}
                     onClose={() => setShowModal(false)}
                     onSalvar={() => {
                         setShowModal(false);
-                        fetchProdutos(); // Recarrega a lista
+                        fetchProdutos();
                     }}
                 />
             )}

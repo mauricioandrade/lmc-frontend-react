@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import * as api from '../services/api';
 import { toast } from 'react-hot-toast';
-import ModalEmpresa from './ModalEmpresa'; // Importa o modal
+import ModalEmpresa from './ModalEmpresa';
 
-// Componente da Página Principal
 function PaginaEmpresa() {
     const [empresas, setEmpresas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Controle do Modal
     const [showModal, setShowModal] = useState(false);
-    const [empresaEmEdicao, setEmpresaEmEdicao] = useState(null); 
+    const [empresaEmEdicao, setEmpresaEmEdicao] = useState(null);
 
-    // Função para carregar os dados
     const fetchEmpresas = () => {
         setLoading(true);
         api.getTodasEmpresas()
@@ -30,14 +27,12 @@ function PaginaEmpresa() {
             });
     };
 
-    // Carrega os dados quando o componente é montado
     useEffect(() => {
         fetchEmpresas();
     }, []);
 
-    // Handlers do CRUD
     const handleAdicionar = () => {
-        setEmpresaEmEdicao(null); 
+        setEmpresaEmEdicao(null);
         setShowModal(true);
     };
 
@@ -53,28 +48,27 @@ function PaginaEmpresa() {
         try {
             await api.deletarEmpresa(id);
             toast.success("Empresa excluída com sucesso!");
-            fetchEmpresas(); // Recarrega a lista
+            fetchEmpresas();
         } catch (error) {
             console.error("Erro ao deletar empresa:", error);
             toast.error(error.response?.data?.message || "Falha ao excluir empresa.");
         }
     };
 
-    // Estilo do botão de adicionar (do seu app)
-    const btnAdicionarStyle = { 
-        color: '#2f81f7', 
+    const btnAdicionarStyle = {
+        color: '#2f81f7',
         border: '1px solid #2f81f7',
         backgroundColor: 'transparent'
     };
 
     return (
         <div className="container" style={{ maxWidth: '900px', width: '100%', color: '#c9d1d9', paddingTop: '1rem' }}>
-            
+
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2 style={{ color: '#58a6ff' }}>Gerenciamento de Empresas</h2>
-                <button 
-                    onClick={handleAdicionar} 
-                    className="btn btn-sm fw-bold" 
+                <button
+                    onClick={handleAdicionar}
+                    className="btn btn-sm fw-bold"
                     style={btnAdicionarStyle}
                     onMouseEnter={(e) => { e.target.style.backgroundColor = '#2f81f7'; e.target.style.color = 'white'; }}
                     onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#2f81f7'; }}
@@ -123,16 +117,16 @@ function PaginaEmpresa() {
                                                 )}
                                             </td>
                                             <td style={{ verticalAlign: 'middle', padding: '1rem', textAlign: 'right' }}>
-                                                <button 
-                                                    onClick={() => handleEditar(empresa)} 
-                                                    className="btn btn-sm btn-link" 
-                                                    style={{ color: '#58a6ff', textDecoration: 'none' }} 
+                                                <button
+                                                    onClick={() => handleEditar(empresa)}
+                                                    className="btn btn-sm btn-link"
+                                                    style={{ color: '#58a6ff', textDecoration: 'none' }}
                                                     title="Editar"
                                                 >✏️</button>
-                                                <button 
-                                                    onClick={() => handleDeletar(empresa.id)} 
-                                                    className="btn btn-sm btn-link" 
-                                                    style={{ color: '#da3633', textDecoration: 'none' }} 
+                                                <button
+                                                    onClick={() => handleDeletar(empresa.id)}
+                                                    className="btn btn-sm btn-link"
+                                                    style={{ color: '#da3633', textDecoration: 'none' }}
                                                     title="Excluir"
                                                 >🗑️</button>
                                             </td>
@@ -145,14 +139,14 @@ function PaginaEmpresa() {
                 </div>
             )}
 
-            {/* --- Renderização Condicional do Modal --- */}
+            
             {showModal && (
                 <ModalEmpresa
                     item={empresaEmEdicao}
                     onClose={() => setShowModal(false)}
                     onSalvar={() => {
                         setShowModal(false);
-                        fetchEmpresas(); // Recarrega a lista
+                        fetchEmpresas();
                     }}
                 />
             )}

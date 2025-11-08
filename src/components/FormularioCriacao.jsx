@@ -1,22 +1,17 @@
-// src/components/FormularioCriacao.jsx
-// Este é o componente filho para "Criação" de novos registros
 
 import React, { useState, useEffect } from 'react';
-import * as api from '../services/api'; 
+import * as api from '../services/api';
 import { toast } from 'react-hot-toast';
 
 function FormularioCriacao({ produtoId, data, tanques, bicos, onSalvar }) {
-  // Estados do Formulário
   const [observacoes, setObservacoes] = useState('');
   const [medicoes, setMedicoes] = useState([]);
   const [vendas, setVendas] = useState([]);
   const [compras, setCompras] = useState([]);
-  
-  // Estados de UI
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Efeito para popular os formulários vazios quando tanques/bicos (props) mudarem
   useEffect(() => {
     if (tanques.length > 0) {
       setMedicoes(tanques.map(t => ({
@@ -26,7 +21,7 @@ function FormularioCriacao({ produtoId, data, tanques, bicos, onSalvar }) {
         estoqueFechamentoFisico: ''
       })));
     }
-    
+
     if (bicos.length > 0) {
       setVendas(bicos.map(b => ({
         bicoId: b.id,
@@ -44,13 +39,12 @@ function FormularioCriacao({ produtoId, data, tanques, bicos, onSalvar }) {
 
   }, [tanques, bicos]);
 
-  // Handlers
   const handleMedicaoChange = (index, field, value) => {
     const novasMedicoes = [...medicoes];
     novasMedicoes[index][field] = value;
     setMedicoes(novasMedicoes);
   };
-  
+
   const handleVendaChange = (index, field, value) => {
     const novasVendas = [...vendas];
     novasVendas[index][field] = value;
@@ -74,8 +68,7 @@ function FormularioCriacao({ produtoId, data, tanques, bicos, onSalvar }) {
     const novasCompras = compras.filter((_, i) => i !== index);
     setCompras(novasCompras);
   };
-  
-  // Lógica de Submissão (POST)
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -127,18 +120,18 @@ function FormularioCriacao({ produtoId, data, tanques, bicos, onSalvar }) {
   return (
     <form onSubmit={handleSubmit}>
       {error && (
-        <div className="alert alert-danger alert-dismissible fade show shadow-sm mb-4" 
-             role="alert" 
+        <div className="alert alert-danger alert-dismissible fade show shadow-sm mb-4"
+             role="alert"
              style={{ backgroundColor: '#3c1f1f', borderColor: '#8b3838', color: '#ff7b7b' }}>
           <strong>❌ Erro!</strong> {error}
-          <button type="button" 
-                  className="btn-close btn-close-white" 
+          <button type="button"
+                  className="btn-close btn-close-white"
                   onClick={() => setError(null)}
                   aria-label="Close"></button>
         </div>
       )}
 
-      {/* Medição dos Tanques */}
+      
       <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d' }}>
         <h5 className="fw-bold mb-3" style={{ color: '#58a6ff' }}>
           <span className="badge me-2" style={{ backgroundColor: '#1f6feb' }}>3</span>
@@ -147,51 +140,51 @@ function FormularioCriacao({ produtoId, data, tanques, bicos, onSalvar }) {
         <p className="small mb-3" style={{ color: '#8b949e' }}>
           Campos 3, 7 e 9 do LMC
         </p>
-        
+
         {medicoes.map((med, index) => (
-          <div key={med.tanqueId} 
-               className="card mb-3 shadow-sm" 
+          <div key={med.tanqueId}
+               className="card mb-3 shadow-sm"
                style={{ backgroundColor: '#0d1117', border: '1px solid #30363d' }}>
             <div className="card-body">
               <div className="row g-3 align-items-end">
                 <div className="col-md-4">
-                  <label className="form-label fw-semibold small" 
+                  <label className="form-label fw-semibold small"
                          style={{ color: '#c9d1d9' }}>
                     🛢️ Tanque
                   </label>
-                  <input type="text" 
-                         className="form-control" 
+                  <input type="text"
+                         className="form-control"
                          style={{ backgroundColor: '#161b22', color: '#8b949e', border: '1px solid #30363d' }}
-                         value={med.nome} 
-                         readOnly 
+                         value={med.nome}
+                         readOnly
                          disabled />
                 </div>
                 <div className="col-md-4">
-                  <label className="form-label fw-semibold small" 
+                  <label className="form-label fw-semibold small"
                          style={{ color: '#c9d1d9' }}>
                     📊 Estoque Abertura (L)
                   </label>
-                  <input type="number" 
-                         step="0.01" 
-                         className="form-control" 
+                  <input type="number"
+                         step="0.01"
+                         className="form-control"
                          style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                          value={med.estoqueAbertura}
                          onChange={e => handleMedicaoChange(index, 'estoqueAbertura', e.target.value)}
-                         required 
+                         required
                          placeholder="0.00" />
                 </div>
                 <div className="col-md-4">
-                  <label className="form-label fw-semibold small" 
+                  <label className="form-label fw-semibold small"
                          style={{ color: '#c9d1d9' }}>
                     📏 Fechamento Físico (L)
                   </label>
-                  <input type="number" 
-                         step="0.01" 
-                         className="form-control" 
+                  <input type="number"
+                         step="0.01"
+                         className="form-control"
                          style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                          value={med.estoqueFechamentoFisico}
                          onChange={e => handleMedicaoChange(index, 'estoqueFechamentoFisico', e.target.value)}
-                         required 
+                         required
                          placeholder="0.00" />
                 </div>
               </div>
@@ -200,39 +193,39 @@ function FormularioCriacao({ produtoId, data, tanques, bicos, onSalvar }) {
         ))}
       </div>
 
-      {/* Recebimentos (Compras) */}
+      
       <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d' }}>
         <h5 className="fw-bold mb-3" style={{ color: '#58a6ff' }}>
           <span className="badge me-2" style={{ backgroundColor: '#1f6feb' }}>4</span>
           Recebimentos (Compras)
         </h5>
         <p className="small mb-3" style={{ color: '#8b949e' }}>Campo 4 do LMC</p>
-        
+
         {compras.map((compra, index) => (
-          <div key={index} 
-               className="card mb-3 shadow-sm" 
+          <div key={index}
+               className="card mb-3 shadow-sm"
                style={{ backgroundColor: '#0d1117', border: '1px solid #30363d' }}>
             <div className="card-body">
               <div className="row g-3 align-items-end">
                 <div className="col-md-4">
-                  <label className="form-label fw-semibold small" 
+                  <label className="form-label fw-semibold small"
                          style={{ color: '#c9d1d9' }}>
                     Nº Nota Fiscal
                   </label>
-                  <input type="text" 
-                         className="form-control" 
+                  <input type="text"
+                         className="form-control"
                          style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                          value={compra.numeroDocumentoFiscal}
                          onChange={e => handleCompraChange(index, 'numeroDocumentoFiscal', e.target.value)}
-                         required 
+                         required
                          placeholder="Nº da NF-e" />
                 </div>
                 <div className="col-md-3">
-                  <label className="form-label fw-semibold small" 
+                  <label className="form-label fw-semibold small"
                          style={{ color: '#c9d1d9' }}>
                     Tanque Descarga
                   </label>
-                  <select className="form-select" 
+                  <select className="form-select"
                           style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                           value={compra.tanqueDescargaId}
                           onChange={e => handleCompraChange(index, 'tanqueDescargaId', e.target.value)}
@@ -244,22 +237,22 @@ function FormularioCriacao({ produtoId, data, tanques, bicos, onSalvar }) {
                   </select>
                 </div>
                 <div className="col-md-3">
-                  <label className="form-label fw-semibold small" 
+                  <label className="form-label fw-semibold small"
                          style={{ color: '#c9d1d9' }}>
                     Volume Recebido (L)
                   </label>
-                  <input type="number" 
-                         step="0.01" 
-                         className="form-control" 
+                  <input type="number"
+                         step="0.01"
+                         className="form-control"
                          style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                          value={compra.volumeRecebido}
                          onChange={e => handleCompraChange(index, 'volumeRecebido', e.target.value)}
-                         required 
+                         required
                          placeholder="0.00" />
                 </div>
                 <div className="col-md-2">
-                  <button type="button" 
-                          className="btn btn-sm w-100" 
+                  <button type="button"
+                          className="btn btn-sm w-100"
                           style={{ backgroundColor: '#da3633', color: 'white', border: 'none' }}
                           onClick={() => removerCompra(index)}>
                     Remover
@@ -269,24 +262,24 @@ function FormularioCriacao({ produtoId, data, tanques, bicos, onSalvar }) {
             </div>
           </div>
         ))}
-        
+
         <div className="text-end mb-3">
-          <button 
-            type="button" 
+          <button
+            type="button"
             className="btn btn-sm fw-bold"
-            style={{ 
-              color: '#2f81f7', 
+            style={{
+              color: '#2f81f7',
               border: '1px solid #2f81f7',
               backgroundColor: 'transparent',
               transition: 'all 0.3s ease'
             }}
-            onMouseEnter={(e) => { 
-              e.target.style.backgroundColor = '#2f81f7'; 
-              e.target.style.color = 'white'; 
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = '#2f81f7';
+              e.target.style.color = 'white';
             }}
-            onMouseLeave={(e) => { 
-              e.target.style.backgroundColor = 'transparent'; 
-              e.target.style.color = '#2f81f7'; 
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = 'transparent';
+              e.target.style.color = '#2f81f7';
             }}
             onClick={adicionarCompra}>
             + Adicionar Compra
@@ -294,20 +287,20 @@ function FormularioCriacao({ produtoId, data, tanques, bicos, onSalvar }) {
         </div>
       </div>
 
-      {/* Vendas por Bico */}
+      
       <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d' }}>
         <h5 className="fw-bold mb-3" style={{ color: '#58a6ff' }}>
           <span className="badge me-2" style={{ backgroundColor: '#1f6feb' }}>5</span>
           Vendas por Bico
         </h5>
         <p className="small mb-3" style={{ color: '#8b949e' }}>Campo 5 do LMC</p>
-        
+
         <div className="row g-3">
           {vendas.map((venda, index) => (
             <div key={venda.bicoId} className="col-md-6">
-              <div className="card shadow-sm h-100" 
+              <div className="card shadow-sm h-100"
                    style={{ backgroundColor: '#0d1117', border: '1px solid #30363d' }}>
-                <div className="card-header" 
+                <div className="card-header"
                      style={{ backgroundColor: '#161b22', border: 'none' }}>
                   <h6 className="mb-0 fw-bold" style={{ color: '#c9d1d9' }}>
                     ⛽ {venda.nome}
@@ -317,57 +310,57 @@ function FormularioCriacao({ produtoId, data, tanques, bicos, onSalvar }) {
                 <div className="card-body">
                   <div className="row g-2">
                     <div className="col-6">
-                      <label className="form-label small fw-semibold" 
+                      <label className="form-label small fw-semibold"
                              style={{ color: '#c9d1d9' }}>
                         Enc. Abertura
                       </label>
-                      <input type="number" 
-                             className="form-control form-control-sm" 
+                      <input type="number"
+                             className="form-control form-control-sm"
                              style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                              value={venda.encerranteAbertura}
                              onChange={e => handleVendaChange(index, 'encerranteAbertura', e.target.value)}
-                             required 
+                             required
                              placeholder="0" />
                     </div>
                     <div className="col-6">
-                      <label className="form-label small fw-semibold" 
+                      <label className="form-label small fw-semibold"
                              style={{ color: '#c9d1d9' }}>
                         Enc. Fechamento
                       </label>
-                      <input type="number" 
-                             className="form-control form-control-sm" 
+                      <input type="number"
+                             className="form-control form-control-sm"
                              style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                              value={venda.encerranteFechamento}
                              onChange={e => handleVendaChange(index, 'encerranteFechamento', e.target.value)}
-                             required 
+                             required
                              placeholder="0" />
                     </div>
                     <div className="col-6">
-                      <label className="form-label small fw-semibold" 
+                      <label className="form-label small fw-semibold"
                              style={{ color: '#c9d1d9' }}>
                         💰 Preço (R$)
                       </label>
-                      <input type="number" 
-                             step="0.001" 
-                             className="form-control form-control-sm" 
+                      <input type="number"
+                             step="0.001"
+                             className="form-control form-control-sm"
                              style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                              value={venda.precoNaBomba}
                              onChange={e => handleVendaChange(index, 'precoNaBomba', e.target.value)}
-                             required 
+                             required
                              placeholder="0.000" />
                     </div>
                     <div className="col-6">
-                      <label className="form-label small fw-semibold" 
+                      <label className="form-label small fw-semibold"
                              style={{ color: '#c9d1d9' }}>
                         🔧 Aferições (L)
                       </label>
-                      <input type="number" 
-                             step="0.01" 
-                             className="form-control form-control-sm" 
+                      <input type="number"
+                             step="0.01"
+                             className="form-control form-control-sm"
                              style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                              value={venda.afericoes}
                              onChange={e => handleVendaChange(index, 'afericoes', e.target.value)}
-                             required 
+                             required
                              placeholder="0.00" />
                     </div>
                   </div>
@@ -377,8 +370,8 @@ function FormularioCriacao({ produtoId, data, tanques, bicos, onSalvar }) {
           ))}
         </div>
       </div>
+
       
-      {/* Observações */}
       <div className="border-top pt-4 mt-4" style={{ borderColor: '#30363d' }}>
         <h5 className="fw-bold mb-3" style={{ color: '#58a6ff' }}>
           <span className="badge me-2" style={{ backgroundColor: '#1f6feb' }}>6</span>
@@ -387,10 +380,10 @@ function FormularioCriacao({ produtoId, data, tanques, bicos, onSalvar }) {
         <p className="small mb-3" style={{ color: '#8b949e' }}>
           Campo 13 - Justificativas (obrigatório se variação &gt; 0.6%)
         </p>
-        
-        <textarea 
-          className="form-control shadow-sm" 
-          id="observacoes" 
+
+        <textarea
+          className="form-control shadow-sm"
+          id="observacoes"
           rows="4"
           style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
           value={observacoes}
@@ -399,15 +392,15 @@ function FormularioCriacao({ produtoId, data, tanques, bicos, onSalvar }) {
         ></textarea>
       </div>
 
-      {/* Botão de Salvar */}
-      <div className="card-footer border-0 p-4 rounded-bottom-4" 
+      
+      <div className="card-footer border-0 p-4 rounded-bottom-4"
            style={{ backgroundColor: '#161b22', borderTop: '1px solid #30363d' }}>
         <div className="d-grid">
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn btn-lg fw-bold shadow"
             disabled={!produtoId || loading}
-            style={{ 
+            style={{
               backgroundColor: loading ? '#1a7f37' : '#238636',
               color: '#ffffff',
               border: 'none',
