@@ -1,21 +1,18 @@
-// src/components/ModalBico.jsx
 import React, { useState, useEffect } from 'react';
 import * as api from '../services/api';
 import { toast } from 'react-hot-toast';
 
 function ModalBico({ item, onClose, onSalvar }) {
-    // 'item' é o bico para editar, ou null para criar
     const [formData, setFormData] = useState({
         numero: item ? item.numero : '',
-        tanqueId: item ? item.tanqueId : '' // ID do tanque associado
+        tanqueId: item ? item.tanqueId : ''
     });
-    const [tanques, setTanques] = useState([]); // Lista de tanques para o dropdown
+    const [tanques, setTanques] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Efeito para carregar a lista de TODOS os tanques
     useEffect(() => {
-        api.getTodosTanques() // Chama a função que criamos
+        api.getTodosTanques()
             .then(res => setTanques(res.data))
             .catch(err => {
                 console.error(err);
@@ -42,8 +39,8 @@ function ModalBico({ item, onClose, onSalvar }) {
         try {
             await api.salvarBico(bicoData);
             toast.success(`Bico ${item ? 'atualizado' : 'criado'} com sucesso!`);
-            onSalvar(); // Recarrega a lista no componente pai
-            onClose();  // Fecha o modal
+            onSalvar();
+            onClose();
         } catch (error) {
             console.error("Erro ao salvar bico:", error);
             setError(error.response?.data?.message || "Falha ao salvar bico.");
@@ -52,39 +49,38 @@ function ModalBico({ item, onClose, onSalvar }) {
         }
     };
 
-    // Estilo do modal (baseado no seu app)
     const modalOverlayStyle = {
         position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-        backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', 
+        backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex',
         alignItems: 'center', justifyContent: 'center', zIndex: 1050
     };
 
     return (
         <div style={modalOverlayStyle} onClick={onClose}>
-            <div 
-                className="card shadow-lg rounded-4" 
+            <div
+                className="card shadow-lg rounded-4"
                 style={{ backgroundColor: '#161b22', border: '1px solid #30363d', width: '500px' }}
-                onClick={e => e.stopPropagation()} 
+                onClick={e => e.stopPropagation()}
             >
                 <div className="card-header py-3" style={{ backgroundColor: '#1f6feb', border: 'none' }}>
                     <h4 className="mb-0 fw-bold text-white">
                         {item ? 'Editar Bico' : 'Adicionar Bico'}
                     </h4>
                 </div>
-                
+
                 <form onSubmit={handleSubmit}>
                     <div className="card-body p-4">
                         {error && <div className="alert alert-danger">{error}</div>}
-                        
+
                         <div className="mb-3">
                             <label className="form-label fw-semibold small" style={{ color: '#c9d1d9' }}>Número do Bico</label>
-                            <input 
+                            <input
                                 name="numero"
                                 type="text" className="form-control"
                                 style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                                 value={formData.numero}
                                 onChange={handleChange}
-                                required 
+                                required
                                 placeholder="Ex: Bico 01"
                             />
                         </div>

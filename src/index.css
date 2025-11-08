@@ -79,7 +79,7 @@ button:disabled {
   opacity: 0.6;
 }
 
-/* Scrollbar dark mode */
+
 ::-webkit-scrollbar {
   width: 12px;
 }
@@ -97,13 +97,13 @@ button:disabled {
   background: #484f58;
 }
 
-/* Placeholder color para inputs */
+
 ::placeholder {
   color: #6e7681 !important;
   opacity: 1;
 }
 
-/* Remover estilos de light mode */
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #c9d1d9;

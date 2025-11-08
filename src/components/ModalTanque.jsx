@@ -1,20 +1,17 @@
-// src/components/ModalTanque.jsx
 import React, { useState, useEffect } from 'react';
 import * as api from '../services/api';
 import { toast } from 'react-hot-toast';
 
 function ModalTanque({ item, onClose, onSalvar }) {
-    // 'item' é o tanque para editar, ou null para criar
     const [formData, setFormData] = useState({
         numero: item ? item.numero : '',
         capacidadeNominal: item ? item.capacidadeNominal : '',
-        produtoId: item ? item.produtoId : '' // ID do produto associado
+        produtoId: item ? item.produtoId : ''
     });
-    const [produtos, setProdutos] = useState([]); // Lista de produtos para o dropdown
+    const [produtos, setProdutos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Efeito para carregar a lista de produtos
     useEffect(() => {
         api.getProdutos()
             .then(res => setProdutos(res.data))
@@ -42,11 +39,10 @@ function ModalTanque({ item, onClose, onSalvar }) {
         };
 
         try {
-            // A função salvarTanque já sabe se deve fazer POST ou PUT
             await api.salvarTanque(tanqueData);
             toast.success(`Tanque ${item ? 'atualizado' : 'criado'} com sucesso!`);
-            onSalvar(); // Recarrega a lista no componente pai
-            onClose();  // Fecha o modal
+            onSalvar();
+            onClose();
         } catch (error) {
             console.error("Erro ao salvar tanque:", error);
             setError(error.response?.data?.message || "Falha ao salvar tanque.");
@@ -55,30 +51,29 @@ function ModalTanque({ item, onClose, onSalvar }) {
         }
     };
 
-    // Estilo do modal (baseado no seu app)
     const modalOverlayStyle = {
         position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-        backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', 
+        backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex',
         alignItems: 'center', justifyContent: 'center', zIndex: 1050
     };
 
     return (
         <div style={modalOverlayStyle} onClick={onClose}>
-            <div 
-                className="card shadow-lg rounded-4" 
+            <div
+                className="card shadow-lg rounded-4"
                 style={{ backgroundColor: '#161b22', border: '1px solid #30363d', width: '600px' }}
-                onClick={e => e.stopPropagation()} 
+                onClick={e => e.stopPropagation()}
             >
                 <div className="card-header py-3" style={{ backgroundColor: '#1f6feb', border: 'none' }}>
                     <h4 className="mb-0 fw-bold text-white">
                         {item ? 'Editar Tanque' : 'Adicionar Tanque'}
                     </h4>
                 </div>
-                
+
                 <form onSubmit={handleSubmit}>
                     <div className="card-body p-4">
                         {error && <div className="alert alert-danger">{error}</div>}
-                        
+
                         <div className="mb-3">
                             <label className="form-label fw-semibold small" style={{ color: '#c9d1d9' }}>Produto Associado</label>
                             <select
@@ -95,28 +90,28 @@ function ModalTanque({ item, onClose, onSalvar }) {
                                 ))}
                             </select>
                         </div>
-                        
+
                         <div className="row g-2">
                             <div className="col-6">
                                 <label className="form-label small fw-semibold" style={{ color: '#c9d1d9' }}>Número do Tanque</label>
-                                <input 
+                                <input
                                     name="numero"
                                     type="text" className="form-control"
                                     style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                                     value={formData.numero}
                                     onChange={handleChange}
-                                    required placeholder="Ex: TQ-01" 
+                                    required placeholder="Ex: TQ-01"
                                 />
                             </div>
                             <div className="col-6">
                                 <label className="form-label small fw-semibold" style={{ color: '#c9d1d9' }}>Capacidade Nominal (L)</label>
-                                <input 
+                                <input
                                     name="capacidadeNominal"
                                     type="number" step="0.01" className="form-control"
                                     style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                                     value={formData.capacidadeNominal}
                                     onChange={handleChange}
-                                    required placeholder="Ex: 20000.00" 
+                                    required placeholder="Ex: 20000.00"
                                 />
                             </div>
                         </div>

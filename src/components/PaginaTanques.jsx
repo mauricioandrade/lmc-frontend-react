@@ -1,23 +1,19 @@
-// src/components/PaginaTanques.jsx
 import React, { useState, useEffect } from 'react';
 import * as api from '../services/api';
 import { toast } from 'react-hot-toast';
-import ModalTanque from './ModalTanque'; // Importa o modal
+import ModalTanque from './ModalTanque';
 
-// Componente da Página Principal
 function PaginaTanques() {
     const [tanques, setTanques] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Controle do Modal
     const [showModal, setShowModal] = useState(false);
-    const [tanqueEmEdicao, setTanqueEmEdicao] = useState(null); // null = Adicionar, (objeto) = Editar
+    const [tanqueEmEdicao, setTanqueEmEdicao] = useState(null);
 
-    // Função para carregar os dados
     const fetchTanques = () => {
         setLoading(true);
-        api.getTodosTanques() // Chama a nova função da api.js
+        api.getTodosTanques()
             .then(response => {
                 setTanques(response.data);
                 setError(null);
@@ -31,14 +27,12 @@ function PaginaTanques() {
             });
     };
 
-    // Carrega os dados quando o componente é montado
     useEffect(() => {
         fetchTanques();
     }, []);
 
-    // Handlers do CRUD
     const handleAdicionar = () => {
-        setTanqueEmEdicao(null); 
+        setTanqueEmEdicao(null);
         setShowModal(true);
     };
 
@@ -54,29 +48,27 @@ function PaginaTanques() {
         try {
             await api.deletarTanque(id);
             toast.success("Tanque excluído com sucesso!");
-            fetchTanques(); // Recarrega a lista
+            fetchTanques();
         } catch (error) {
             console.error("Erro ao deletar tanque:", error);
             toast.error(error.response?.data?.message || "Falha ao excluir tanque.");
         }
     };
 
-    // Estilo do botão de adicionar (do seu app)
-    const btnAdicionarStyle = { 
-        color: '#2f81f7', 
+    const btnAdicionarStyle = {
+        color: '#2f81f7',
         border: '1px solid #2f81f7',
         backgroundColor: 'transparent'
     };
 
     return (
-        // Container principal com o estilo dark
         <div className="container" style={{ maxWidth: '900px', width: '100%', color: '#c9d1d9', paddingTop: '1rem' }}>
-            
+
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2 style={{ color: '#58a6ff' }}>Gerenciamento de Tanques</h2>
-                <button 
-                    onClick={handleAdicionar} 
-                    className="btn btn-sm fw-bold" 
+                <button
+                    onClick={handleAdicionar}
+                    className="btn btn-sm fw-bold"
                     style={btnAdicionarStyle}
                     onMouseEnter={(e) => { e.target.style.backgroundColor = '#2f81f7'; e.target.style.color = 'white'; }}
                     onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#2f81f7'; }}
@@ -119,16 +111,16 @@ function PaginaTanques() {
                                             <td style={{ verticalAlign: 'middle', padding: '1rem' }}>{tanque.produtoNome || 'N/A'}</td>
                                             <td style={{ verticalAlign: 'middle', padding: '1rem' }}>{tanque.capacidadeNominal} L</td>
                                             <td style={{ verticalAlign: 'middle', padding: '1rem', textAlign: 'right' }}>
-                                                <button 
-                                                    onClick={() => handleEditar(tanque)} 
-                                                    className="btn btn-sm btn-link" 
-                                                    style={{ color: '#58a6ff', textDecoration: 'none' }} 
+                                                <button
+                                                    onClick={() => handleEditar(tanque)}
+                                                    className="btn btn-sm btn-link"
+                                                    style={{ color: '#58a6ff', textDecoration: 'none' }}
                                                     title="Editar"
                                                 >✏️</button>
-                                                <button 
-                                                    onClick={() => handleDeletar(tanque.id)} 
-                                                    className="btn btn-sm btn-link" 
-                                                    style={{ color: '#da3633', textDecoration: 'none' }} 
+                                                <button
+                                                    onClick={() => handleDeletar(tanque.id)}
+                                                    className="btn btn-sm btn-link"
+                                                    style={{ color: '#da3633', textDecoration: 'none' }}
                                                     title="Excluir"
                                                 >🗑️</button>
                                             </td>
@@ -141,14 +133,14 @@ function PaginaTanques() {
                 </div>
             )}
 
-            {/* --- Renderização Condicional do Modal --- */}
+            
             {showModal && (
                 <ModalTanque
                     item={tanqueEmEdicao}
                     onClose={() => setShowModal(false)}
                     onSalvar={() => {
                         setShowModal(false);
-                        fetchTanques(); // Recarrega a lista de tanques
+                        fetchTanques();
                     }}
                 />
             )}

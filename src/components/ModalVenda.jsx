@@ -1,11 +1,9 @@
-// src/components/ModalVenda.jsx
 import React, { useState, useEffect } from 'react';
 import * as api from '../services/api';
 import { toast } from 'react-hot-toast';
 
 function ModalVenda({ item, folhaId, bicosDisponiveis, onClose, onSalvar }) {
-    
-    // O 'item' é a venda (se for edição) ou 'null' (se for adição)
+
     const [formData, setFormData] = useState({
         bicoId: item ? item.bico.id : '',
         precoNaBomba: item ? item.precoNaBomba : '',
@@ -13,7 +11,7 @@ function ModalVenda({ item, folhaId, bicosDisponiveis, onClose, onSalvar }) {
         encerranteFechamento: item ? item.encerranteFechamento : '',
         afericoes: item ? item.afericoes : '0'
     });
-    
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -27,7 +25,6 @@ function ModalVenda({ item, folhaId, bicosDisponiveis, onClose, onSalvar }) {
         setLoading(true);
         setError(null);
 
-        // Este é o DTO que o LmcService espera
         const dto = {
             bicoId: formData.bicoId,
             precoNaBomba: formData.precoNaBomba,
@@ -38,18 +35,14 @@ function ModalVenda({ item, folhaId, bicosDisponiveis, onClose, onSalvar }) {
 
         try {
             if (item) {
-                // MODO EDIÇÃO (PUT)
-                // Chama api.atualizarVenda(id, dto)
                 await api.atualizarVenda(item.id, dto);
                 toast.success("Venda atualizada com sucesso!");
             } else {
-                // MODO CRIAÇÃO (POST)
-                // Chama api.adicionarVenda(folhaId, dto)
                 await api.adicionarVenda(folhaId, dto);
                 toast.success("Venda adicionada com sucesso!");
             }
-            onSalvar(); // Recarrega os dados da página principal
-            onClose();  // Fecha o modal
+            onSalvar();
+            onClose();
         } catch (error) {
             console.error("Erro ao salvar venda:", error);
             setError(error.response?.data?.message || "Falha ao salvar.");
@@ -58,29 +51,28 @@ function ModalVenda({ item, folhaId, bicosDisponiveis, onClose, onSalvar }) {
         }
     };
 
-    // Estilo do modal (igual ao ModalMedicao)
     const modalOverlayStyle = {
         position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-        backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', 
+        backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex',
         alignItems: 'center', justifyContent: 'center', zIndex: 1050
     };
 
     return (
         <div style={modalOverlayStyle} onClick={onClose}>
-            <div 
-                className="card shadow-lg rounded-4" 
-                style={{ backgroundColor: '#161b22', border: '1px solid #30363d', width: '600px' }} // Um pouco mais largo
-                onClick={e => e.stopPropagation()} // Impede de fechar ao clicar dentro
+            <div
+                className="card shadow-lg rounded-4"
+                style={{ backgroundColor: '#161b22', border: '1px solid #30363d', width: '600px' }}
+                onClick={e => e.stopPropagation()}
             >
                 <div className="card-header py-3" style={{ backgroundColor: '#1f6feb', border: 'none' }}>
                     <h4 className="mb-0 fw-bold text-white">
                         {item ? 'Editar Venda' : 'Adicionar Venda'}
                     </h4>
                 </div>
-                
+
                 <form onSubmit={handleSubmit}>
                     <div className="card-body p-4">
-                        
+
                         {error && (
                             <div className="alert alert-danger">{error}</div>
                         )}
@@ -94,7 +86,7 @@ function ModalVenda({ item, folhaId, bicosDisponiveis, onClose, onSalvar }) {
                                 value={formData.bicoId}
                                 onChange={handleChange}
                                 required
-                                disabled={!!item} // Desabilita a troca de bico na edição
+                                disabled={!!item}
                             >
                                 <option value="">Selecione...</option>
                                 {bicosDisponiveis.map(b => (
@@ -102,28 +94,28 @@ function ModalVenda({ item, folhaId, bicosDisponiveis, onClose, onSalvar }) {
                                 ))}
                             </select>
                         </div>
-                        
+
                         <div className="row g-2">
                             <div className="col-6">
                                 <label className="form-label small fw-semibold" style={{ color: '#c9d1d9' }}>Enc. Abertura</label>
-                                <input 
+                                <input
                                     name="encerranteAbertura"
                                     type="number" className="form-control"
                                     style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                                     value={formData.encerranteAbertura}
                                     onChange={handleChange}
-                                    required placeholder="0" 
+                                    required placeholder="0"
                                 />
                             </div>
                             <div className="col-6">
                                 <label className="form-label small fw-semibold" style={{ color: '#c9d1d9' }}>Enc. Fechamento</label>
-                                <input 
+                                <input
                                     name="encerranteFechamento"
                                     type="number" className="form-control"
                                     style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                                     value={formData.encerranteFechamento}
                                     onChange={handleChange}
-                                    required placeholder="0" 
+                                    required placeholder="0"
                                 />
                             </div>
                         </div>
@@ -131,24 +123,24 @@ function ModalVenda({ item, folhaId, bicosDisponiveis, onClose, onSalvar }) {
                         <div className="row g-2 mt-2">
                             <div className="col-6">
                                 <label className="form-label small fw-semibold" style={{ color: '#c9d1d9' }}>💰 Preço (R$)</label>
-                                <input 
+                                <input
                                     name="precoNaBomba"
                                     type="number" step="0.001" className="form-control"
                                     style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                                     value={formData.precoNaBomba}
                                     onChange={handleChange}
-                                    required placeholder="0.000" 
+                                    required placeholder="0.000"
                                 />
                             </div>
                             <div className="col-6">
                                 <label className="form-label small fw-semibold" style={{ color: '#c9d1d9' }}>🔧 Aferições (L)</label>
-                                <input 
+                                <input
                                     name="afericoes"
                                     type="number" step="0.01" className="form-control"
                                     style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                                     value={formData.afericoes}
                                     onChange={handleChange}
-                                    required placeholder="0.00" 
+                                    required placeholder="0.00"
                                 />
                             </div>
                         </div>
