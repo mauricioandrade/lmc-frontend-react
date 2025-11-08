@@ -1,37 +1,65 @@
-# LMC Front-end
+# 🌐 LMC Front-end
 
-Este projeto é a interface web do ecossistema **LMC**, servindo como front-end para o backend "lmc". Ele oferece uma experiência de usuário responsiva e moderna para acessar os recursos expostos pelo serviço back-end, permitindo que os usuários interajam com as funcionalidades principais de forma intuitiva.
+O **LMC Front-end** é a camada de apresentação do ecossistema **LMC**, responsável por traduzir as funcionalidades expostas pelo serviço de back-end em uma experiência visual intuitiva, acessível e responsiva. Ele permite que os usuários interajam com os recursos do sistema de maneira rápida e segura, entregando valor ao negócio por meio de interfaces amigáveis.
 
-## Tecnologias principais
+## 🧠 Por que este front-end existe?
 
-- [React](https://react.dev/) com [Vite](https://vite.dev/) para desenvolvimento rápido e modular.
-- [ESLint](https://eslint.org/) para padronização e qualidade do código.
+- **Centralizar a experiência do usuário:** concentra as principais jornadas do produto em um único ambiente, facilitando a navegação.
+- **Escalabilidade e agilidade:** desacopla a camada visual do back-end "lmc", permitindo evolução independente sem interromper serviços críticos.
+- **Consistência visual:** garante um design unificado para todas as funcionalidades expostas pelo back-end.
 
-## Executando o projeto
+## 🛠️ Tecnologias principais
 
-1. Instale as dependências:
+- **⚛️ React + ⚡ Vite:** combinação que acelera o desenvolvimento, com hot reload, componentização moderna e build otimizado.
+- **🧹 ESLint:** assegura padrões de código consistentes, reduz erros e facilita contribuições colaborativas.
+- **🎨 CSS Modules / Tailwind (se aplicável):** organização de estilos previsível e reutilizável para componentes visuais.
+- **📦 NPM:** gerenciador de pacotes utilizado para dependências e scripts.
+
+> 💡 Caso novas tecnologias sejam adicionadas (ex.: bibliotecas UI ou ferramentas de testes), mantenha esta seção atualizada.
+
+## 🚀 Como executar localmente
+
+1. **Instale as dependências**
    ```bash
    npm install
    ```
-2. Inicie o servidor de desenvolvimento:
+2. **Inicie o servidor de desenvolvimento**
    ```bash
    npm run dev
    ```
+3. Acesse [http://localhost:5173](http://localhost:5173) e comece a explorar.
 
-O projeto ficará disponível em [http://localhost:5173](http://localhost:5173) por padrão.
+### Modos adicionais
 
-## Scripts disponíveis
+- `npm run build`: gera uma versão otimizada pronta para deploy.
+- `npm run preview`: faz o preview local da build de produção.
+- `npm run lint`: avalia a qualidade do código com as regras do projeto.
 
-- `npm run dev`: inicia o servidor de desenvolvimento com recarregamento em tempo real.
-- `npm run build`: gera a versão otimizada para produção.
-- `npm run lint`: executa a verificação de lint para manter a qualidade do código.
-- `npm run preview`: serve localmente a build de produção para testes.
+## 🗂️ Estrutura do projeto
 
-## Estrutura básica
+- `src/`: componentes, hooks, páginas e estilos da interface.
+- `public/`: assets estáticos servidos diretamente (ícones, manifest, etc.).
+- `docs/`: documentação complementar (fluxos, guias, protótipos).
+- `vite.config.js`: configuração do bundler Vite.
+- `eslint.config.js`: regras personalizadas de lint.
 
-A estrutura principal do projeto está concentrada no diretório `src/`, onde você encontrará os componentes, estilos e configurações relacionadas à interface.
+## 🤝 Contribuindo
 
-## Contribuindo
+1. Crie um fork ou branch a partir da `main`.
+2. Desenvolva sua feature ou correção seguindo o guia de estilo.
+3. Rode os scripts `npm run lint` e, quando aplicável, `npm run build` antes de abrir um PR.
+4. Descreva claramente as mudanças e screenshots (quando visuais) na pull request.
 
-Sinta-se à vontade para abrir issues ou enviar pull requests com melhorias. Certifique-se de seguir as práticas de código estabelecidas e validar as alterações com os scripts de lint e build.
+## 📦 Deploy e ambientes
 
+- **Desenvolvimento:** via `npm run dev`.
+- **Homologação/Produção:** utilize o artefato de `npm run build` integrado ao pipeline do ecossistema LMC (configure o servidor para servir o diretório `dist/`).
+
+## 📚 Recursos adicionais
+
+- [Documentação oficial do React](https://react.dev/)
+- [Documentação do Vite](https://vite.dev/)
+- [Guia do ESLint](https://eslint.org/docs/latest/)
+- [Guia de CSS Modules](https://github.com/css-modules/css-modules)
+
+Mantenha-se atento às boas práticas e continue evoluindo o front-end para oferecer a melhor experiência aos usuários do LMC! 💙
