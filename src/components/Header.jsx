@@ -1,60 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import './Header.css';
+
+const NAV_ITEMS = [
+  { to: '/', label: 'Formulário' },
+  { to: '/relatorio', label: 'Relatório' },
+  { to: '/config/produtos', label: 'Produtos' },
+  { to: '/config/tanques', label: 'Tanques' },
+  { to: '/config/bicos', label: 'Bicos' },
+  { to: '/config/empresas', label: 'Empresas' },
+];
 
 function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const navLinkStyle = ({ isActive }) => ({
-    color: isActive ? '#ffffff' : '#c9d1d9',
-    fontWeight: isActive ? 'bold' : 'normal',
-    paddingBottom: '5px',
-    borderBottom: isActive ? '2px solid #1f6feb' : '2px solid transparent',
-    textDecoration: 'none'
-  });
+  const navLinkClassName = ({ isActive }) =>
+    `app-navbar__link${isActive ? ' is-active' : ''}`;
+
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
 
   return (
-    <nav
-      className="navbar navbar-expand-lg navbar-dark mb-4 shadow-sm rounded-4"
-      style={{
-        backgroundColor: '#161b22',
-        border: '1px solid #30363d'
-      }}
-    >
-      <div className="container-fluid" style={{ maxWidth: '900px' }}>
-
-        <Link className="navbar-brand fw-bold" to="/" style={{ color: '#58a6ff' }}>
-          Sistema LMC
-        </Link>
-
-        <div className="navbar-nav d-flex flex-row gap-4">
-          <NavLink className="nav-link" to="/" style={navLinkStyle}>
-            Formulário
-          </NavLink>
-          <NavLink className="nav-link" to="/relatorio" style={navLinkStyle}>
-            Relatório
-          </NavLink>
-          <NavLink className="nav-link" to="/config/produtos" style={navLinkStyle}>
-            Produtos
-          </NavLink>
-          <NavLink className="nav-link" to="/config/tanques" style={navLinkStyle}>
-            Tanques
-          </NavLink>
-          <NavLink className="nav-link" to="/config/bicos" style={navLinkStyle}>
-            Bicos
-          </NavLink>
-
-          
-          <NavLink
-            className="nav-link"
-            to="/config/empresas"
-            style={navLinkStyle}
-          >
-            Empresas
-          </NavLink>
-          
-
+    <header className="app-navbar__wrapper">
+      <nav className="app-navbar" aria-label="Navegação principal">
+        <div className="app-navbar__brand-group">
+          <Link className="app-navbar__brand" to="/">
+            <span className="app-navbar__brand-badge">LMC</span>
+            <span className="app-navbar__brand-text">Sistema de Controle</span>
+          </Link>
+          <span className="app-navbar__badge">Dashboard</span>
         </div>
-      </div>
-    </nav>
+
+        <button
+          type="button"
+          className="app-navbar__toggler"
+          aria-label="Alternar menu de navegação"
+          aria-expanded={isMenuOpen}
+          onClick={toggleMenu}
+        >
+          <span className="app-navbar__toggler-bar" />
+          <span className="app-navbar__toggler-bar" />
+          <span className="app-navbar__toggler-bar" />
+        </button>
+
+        <div className={`app-navbar__menu${isMenuOpen ? ' is-open' : ''}`}>
+          {NAV_ITEMS.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={navLinkClassName}
+              onClick={closeMenu}
+            >
+              <span>{item.label}</span>
+            </NavLink>
+          ))}
+        </div>
+      </nav>
+    </header>
   );
 }
 

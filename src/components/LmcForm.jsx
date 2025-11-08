@@ -32,125 +32,98 @@ function LmcForm() {
   };
 
   return (
-    <div
-      className="min-vh-100 d-flex align-items-center justify-content-center py-4 px-3"
-      style={{
-        backgroundColor: '#0d1117',
-        width: '100%',
-        margin: 0,
-        padding: '2rem 1rem',
-      }}
-    >
-      <div className="container" style={{ maxWidth: '900px', width: '100%' }}>
-        <div className="text-center mb-5">
-          <h1 className="display-5 fw-bold mb-2" style={{ color: '#58a6ff' }}>
-            📊 Sistema LMC
-          </h1>
-          <p className="fs-6" style={{ color: '#8b949e' }}>
-            Gestão de Leituras de Medição de Combustível
-          </p>
+    <section className="page-section">
+      <div className="page-section__header">
+        <h1 className="page-section__title">📊 Sistema LMC</h1>
+        <p className="page-section__subtitle">
+          Gestão de Leituras de Medição de Combustível com foco em clareza e produtividade.
+        </p>
+      </div>
+
+      {error && (
+        <div className="feedback-banner feedback-banner--error" role="alert">
+          <strong>❌ Erro!</strong>
+          <span>{error}</span>
+          <button
+            type="button"
+            className="feedback-banner__close"
+            onClick={clearError}
+            aria-label="Fechar alerta"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      <div className="card surface-card">
+        <div className="card-header surface-card__header">
+          <h4 className="mb-0 fw-bold">
+            {folhaCarregada ? '📝 Editando Registro Diário' : '📝 Novo Registro Diário'}
+          </h4>
         </div>
 
-        {error && (
-          <div
-            className="alert alert-danger alert-dismissible fade show shadow-sm mb-4"
-            style={{ backgroundColor: '#3c1f1f', borderColor: '#8b3838', color: '#ff7b7b' }}
-          >
-            <strong>❌ Erro!</strong> {error}
-            <button
-              type="button"
-              className="btn-close btn-close-white"
-              onClick={clearError}
-              aria-label="Close"
-            ></button>
-          </div>
-        )}
-
-        <div
-          className="card shadow-lg rounded-4 mb-4"
-          style={{ backgroundColor: '#161b22', border: '1px solid #30363d' }}
-        >
-          <div className="card-header py-3 rounded-top-4" style={{ backgroundColor: '#1f6feb', border: 'none' }}>
-            <h4 className="mb-0 fw-bold text-white">
-              {folhaCarregada ? '📝 Editando Registro Diário' : '📝 Novo Registro Diário'}
-            </h4>
-          </div>
-
-          <div className="card-body p-4">
-            <div className="row g-4 mb-4">
-              <div className="col-md-6">
-                <label htmlFor="produto" className="form-label fw-semibold" style={{ color: '#c9d1d9' }}>
-                  1. Produto
-                </label>
-                <select
-                  id="produto"
-                  className="form-select form-select-lg"
-                  style={{
-                    backgroundColor: '#0d1117',
-                    color: '#c9d1d9',
-                    border: '1px solid #30363d',
-                  }}
-                  value={filters.produtoId}
-                  onChange={handleProdutoChange}
-                  disabled={loading}
-                >
-                  <option value="">Selecione um produto...</option>
-                  {produtos.map((produto) => (
-                    <option key={produto.id} value={produto.id}>
-                      {produto.nome}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="col-md-6">
-                <label htmlFor="data" className="form-label fw-semibold" style={{ color: '#c9d1d9' }}>
-                  2. Data
-                </label>
-                <input
-                  type="date"
-                  id="data"
-                  className="form-control form-control-lg"
-                  style={{
-                    backgroundColor: '#0d1117',
-                    color: '#c9d1d9',
-                    border: '1px solid #30363d',
-                  }}
-                  value={filters.data}
-                  onChange={handleDataChange}
-                  disabled={loading}
-                />
-              </div>
+        <div className="card-body surface-card__body">
+          <div className="row g-4 mb-4">
+            <div className="col-md-6">
+              <label htmlFor="produto" className="form-label fw-semibold">
+                1. Produto
+              </label>
+              <select
+                id="produto"
+                className="form-select form-select-lg"
+                value={filters.produtoId}
+                onChange={handleProdutoChange}
+                disabled={loading}
+              >
+                <option value="">Selecione um produto...</option>
+                {produtos.map((produto) => (
+                  <option key={produto.id} value={produto.id}>
+                    {produto.nome}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {loading && (
-              <p className="text-center" style={{ color: '#8b949e' }}>
-                Carregando dados...
-              </p>
-            )}
-
-            {!loading && !folhaCarregada && filters.produtoId && (
-              <FormularioCriacao
-                produtoId={filters.produtoId}
-                dataSelecionada={filters.data}
-                tanques={tanques}
-                bicos={bicos}
-                onAtualizar={handleAtualizacao}
+            <div className="col-md-6">
+              <label htmlFor="data" className="form-label fw-semibold">
+                2. Data
+              </label>
+              <input
+                type="date"
+                id="data"
+                className="form-control form-control-lg"
+                value={filters.data}
+                onChange={handleDataChange}
+                disabled={loading}
               />
-            )}
-
-            {!loading && folhaCarregada && (
-              <AreaDeEdicao
-                folha={folhaCarregada}
-                tanques={tanques}
-                bicos={bicos}
-                onAtualizar={handleAtualizacao}
-              />
-            )}
+            </div>
           </div>
+
+          {loading && (
+            <p className="text-center text-muted mb-0">Carregando dados...</p>
+          )}
+
+          {!loading && !folhaCarregada && filters.produtoId && (
+            <FormularioCriacao
+              produtoId={filters.produtoId}
+              dataSelecionada={filters.data}
+              tanques={tanques}
+              bicos={bicos}
+              onAtualizar={handleAtualizacao}
+            />
+          )}
+
+          {!loading && folhaCarregada && (
+            <AreaDeEdicao
+              folha={folhaCarregada}
+              tanques={tanques}
+              bicos={bicos}
+              onAtualizar={handleAtualizacao}
+            />
+          )}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 

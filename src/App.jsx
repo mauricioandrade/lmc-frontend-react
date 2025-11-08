@@ -3,22 +3,25 @@ import { Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Header from './components/Header';
 import { defaultToastOptions } from './config/toastConfig';
+import './App.css';
 
 function App() {
   return (
     <>
       <Toaster {...defaultToastOptions} />
-      <div className="container mt-4">
-        <div className="row">
-          <div className="col-lg-10 col-xl-10 mx-auto">
-            <Header />
-            <main>
-              <Outlet />
-            </main>
-            <footer className="mt-5 text-center text-muted">
-              <p>&copy; {new Date().getFullYear()} Seu Sistema LMC</p>
-            </footer>
-          </div>
+      <div className="app-shell">
+        <div className="app-gradient" aria-hidden="true" />
+        <div className="app-container">
+          <Header />
+          <main className="app-main" role="main">
+            <Outlet />
+          </main>
+          <footer className="app-footer">
+            <p className="app-footer__copyright">
+              &copy; {new Date().getFullYear()} Sistema LMC
+            </p>
+            <p className="app-footer__tagline">Gestão inteligente para postos de combustível.</p>
+          </footer>
         </div>
       </div>
     </>

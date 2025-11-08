@@ -135,63 +135,56 @@ function PaginaProdutos() {
         }
     };
 
-    const btnAdicionarStyle = {
-        color: '#2f81f7',
-        border: '1px solid #2f81f7',
-        backgroundColor: 'transparent'
-    };
-
     return (
-        <div className="container" style={{ maxWidth: '900px', width: '100%', color: '#c9d1d9', paddingTop: '2rem' }}>
-
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 style={{ color: '#58a6ff' }}>Gerenciamento de Produtos</h2>
+        <section className="page-section">
+            <div className="page-toolbar">
+                <div className="page-toolbar__content">
+                    <h2 className="page-section__title page-section__title--secondary mb-1">Gerenciamento de Produtos</h2>
+                    <p className="page-section__subtitle page-section__subtitle--left">
+                        Organize os itens comercializados e mantenha o catálogo sempre atualizado.
+                    </p>
+                </div>
                 <button
                     onClick={handleAdicionar}
-                    className="btn btn-sm fw-bold"
-                    style={btnAdicionarStyle}
-                    onMouseEnter={(e) => { e.target.style.backgroundColor = '#2f81f7'; e.target.style.color = 'white'; }}
-                    onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#2f81f7'; }}
+                    className="btn btn-outline-accent page-toolbar__action"
                 >
                     + Adicionar Produto
                 </button>
             </div>
 
             {error && <div className="alert alert-danger">{error}</div>}
-            {loading && <p>Carregando produtos...</p>}
+            {loading && <p className="text-muted">Carregando produtos...</p>}
 
             {!loading && !error && (
-                <div className="card shadow-lg rounded-4" style={{ backgroundColor: '#161b22', border: '1px solid #30363d' }}>
+                <div className="card surface-card">
                     <div className="card-body p-0">
-                        <table className="table table-dark table-hover mb-0" style={{ borderRadius: '0.5rem', overflow: 'hidden' }}>
+                        <table className="table table-dark table-hover mb-0 align-middle">
                             <thead>
                                 <tr>
-                                    <th scope="col" style={{ borderTop: '0', padding: '1rem' }}>ID</th>
-                                    <th scope="col" style={{ borderTop: '0', padding: '1rem' }}>Nome</th>
-                                    <th scope="col" style={{ borderTop: '0', padding: '1rem', width: '120px' }}>Ações</th>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col" className="text-end">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {produtos.length === 0 && (
                                     <tr>
-                                        <td colSpan="3" className="text-center" style={{ padding: '1rem' }}>Nenhum produto cadastrado.</td>
+                                        <td colSpan="3" className="text-center py-4">Nenhum produto cadastrado.</td>
                                     </tr>
                                 )}
                                 {produtos.map(produto => (
                                     <tr key={produto.id}>
-                                        <td style={{ verticalAlign: 'middle', padding: '1rem' }}>{produto.id}</td>
-                                        <td style={{ verticalAlign: 'middle', padding: '1rem' }}>{produto.nome}</td>
-                                        <td style={{ verticalAlign: 'middle', padding: '1rem' }}>
+                                        <td className="py-3">{produto.id}</td>
+                                        <td className="py-3">{produto.nome}</td>
+                                        <td className="py-3 text-end">
                                             <button
                                                 onClick={() => handleEditar(produto)}
-                                                className="btn btn-sm btn-link"
-                                                style={{ color: '#58a6ff', textDecoration: 'none' }}
+                                                className="btn btn-link btn-link-accent"
                                                 title="Editar"
                                             >✏️</button>
                                             <button
                                                 onClick={() => handleDeletar(produto.id)}
-                                                className="btn btn-sm btn-link"
-                                                style={{ color: '#da3633', textDecoration: 'none' }}
+                                                className="btn btn-link btn-link-danger"
                                                 title="Excluir"
                                             >🗑️</button>
                                         </td>
@@ -203,7 +196,6 @@ function PaginaProdutos() {
                 </div>
             )}
 
-            
             {showModal && (
                 <ModalProduto
                     item={produtoEmEdicao}
@@ -214,8 +206,7 @@ function PaginaProdutos() {
                     }}
                 />
             )}
-
-        </div>
+        </section>
     );
 }
 
