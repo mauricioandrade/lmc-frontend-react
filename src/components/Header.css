@@ -1,0 +1,195 @@
+.app-navbar__wrapper {
+  position: relative;
+  z-index: 2;
+}
+
+.app-navbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: clamp(1.2rem, 3vw, 1.6rem) clamp(1.4rem, 3vw, 2rem);
+  background: rgba(13, 17, 23, 0.82);
+  border: 1px solid rgba(88, 166, 255, 0.14);
+  border-radius: 24px;
+  box-shadow: 0 24px 48px rgba(5, 11, 25, 0.4);
+  backdrop-filter: blur(18px);
+}
+
+.app-navbar__brand-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app-navbar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.app-navbar__brand-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(47, 129, 247, 0.85), rgba(56, 189, 248, 0.55));
+  color: #fff;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  box-shadow: 0 18px 30px rgba(47, 129, 247, 0.45);
+}
+
+.app-navbar__brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.app-navbar__brand-text::after {
+  content: 'Ligações, Medições e Controle';
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.app-navbar__badge {
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(47, 129, 247, 0.15);
+  border: 1px solid rgba(47, 129, 247, 0.35);
+  color: var(--accent-primary);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.app-navbar__menu {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.app-navbar__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.app-navbar__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(47, 129, 247, 0.35), rgba(56, 189, 248, 0.2));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: -1;
+}
+
+.app-navbar__link:hover {
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.app-navbar__link:hover::after {
+  opacity: 1;
+}
+
+.app-navbar__link.is-active {
+  color: var(--text-primary);
+}
+
+.app-navbar__link.is-active::after {
+  opacity: 1;
+}
+
+.app-navbar__toggler {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0.35rem;
+  border: 1px solid rgba(88, 166, 255, 0.35);
+  border-radius: 12px;
+  background: rgba(13, 17, 23, 0.7);
+  color: inherit;
+  box-shadow: none;
+}
+
+.app-navbar__toggler:hover {
+  transform: none;
+  box-shadow: none;
+  background: rgba(13, 17, 23, 0.9);
+}
+
+.app-navbar__toggler-bar {
+  width: 22px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--text-secondary);
+  display: block;
+}
+
+@media (max-width: 992px) {
+  .app-navbar {
+    flex-wrap: wrap;
+    padding: 1.2rem 1.4rem;
+  }
+
+  .app-navbar__menu {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.65rem;
+    margin-top: 0.75rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .app-navbar__menu.is-open {
+    max-height: 600px;
+  }
+
+  .app-navbar__toggler {
+    display: flex;
+    margin-left: auto;
+  }
+
+  .app-navbar__badge {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .app-navbar {
+    border-radius: 18px;
+  }
+
+  .app-navbar__brand-badge {
+    width: 36px;
+    height: 36px;
+    font-size: 0.85rem;
+  }
+
+  .app-navbar__brand-text::after {
+    display: none;
+  }
+
+  .app-navbar__menu {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+}

@@ -55,23 +55,18 @@ function PaginaEmpresa() {
         }
     };
 
-    const btnAdicionarStyle = {
-        color: '#2f81f7',
-        border: '1px solid #2f81f7',
-        backgroundColor: 'transparent'
-    };
-
     return (
-        <div className="container" style={{ maxWidth: '900px', width: '100%', color: '#c9d1d9', paddingTop: '1rem' }}>
-
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 style={{ color: '#58a6ff' }}>Gerenciamento de Empresas</h2>
+        <section className="page-section">
+            <div className="page-toolbar">
+                <div className="page-toolbar__content">
+                    <h2 className="page-section__title page-section__title--secondary mb-1">Gerenciamento de Empresas</h2>
+                    <p className="page-section__subtitle page-section__subtitle--left">
+                        Cadastre as empresas atendidas e mantenha o controle de clientes corporativos.
+                    </p>
+                </div>
                 <button
                     onClick={handleAdicionar}
-                    className="btn btn-sm fw-bold"
-                    style={btnAdicionarStyle}
-                    onMouseEnter={(e) => { e.target.style.backgroundColor = '#2f81f7'; e.target.style.color = 'white'; }}
-                    onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#2f81f7'; }}
+                    className="btn btn-outline-accent page-toolbar__action"
                 >
                     + Adicionar Empresa
                 </button>
@@ -80,53 +75,51 @@ function PaginaEmpresa() {
             {error && <div className="alert alert-danger">{error}</div>}
             {loading && (
                 <div className="text-center py-5">
-                    <div className="spinner-border" role="status" style={{ color: '#58a6ff' }}>
+                    <div className="spinner-border text-primary" role="status">
                         <span className="visually-hidden">Carregando...</span>
                     </div>
                 </div>
             )}
 
             {!loading && !error && (
-                <div className="card shadow-lg rounded-4" style={{ backgroundColor: '#161b22', border: '1px solid #30363d' }}>
+                <div className="card surface-card">
                     <div className="card-body p-0">
                         <div className="table-responsive">
-                            <table className="table table-dark table-hover mb-0" style={{ borderRadius: '0.5rem', overflow: 'hidden' }}>
+                            <table className="table table-dark table-hover mb-0 align-middle">
                                 <thead>
                                     <tr>
-                                        <th scope="col" style={{ borderTop: '0', padding: '1rem' }}>Razão Social</th>
-                                        <th scope="col" style={{ borderTop: '0', padding: '1rem' }}>CNPJ</th>
-                                        <th scope="col" style={{ borderTop: '0', padding: '1rem' }}>Ativa?</th>
-                                        <th scope="col" style={{ borderTop: '0', padding: '1rem', width: '120px', textAlign: 'right' }}>Ações</th>
+                                        <th scope="col">Razão Social</th>
+                                        <th scope="col">CNPJ</th>
+                                        <th scope="col">Ativa?</th>
+                                        <th scope="col" className="text-end">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {empresas.length === 0 && (
                                         <tr>
-                                            <td colSpan="4" className="text-center" style={{ padding: '1rem' }}>Nenhuma empresa cadastrada.</td>
+                                            <td colSpan="4" className="text-center py-4">Nenhuma empresa cadastrada.</td>
                                         </tr>
                                     )}
                                     {empresas.map(empresa => (
                                         <tr key={empresa.id}>
-                                            <td style={{ verticalAlign: 'middle', padding: '1rem' }}>{empresa.razaoSocial}</td>
-                                            <td style={{ verticalAlign: 'middle', padding: '1rem' }}>{empresa.cnpj}</td>
-                                            <td style={{ verticalAlign: 'middle', padding: '1rem' }}>
+                                            <td className="py-3">{empresa.razaoSocial}</td>
+                                            <td className="py-3">{empresa.cnpj}</td>
+                                            <td className="py-3">
                                                 {empresa.isAtiva ? (
-                                                    <span className="badge" style={{ backgroundColor: '#238636', color: '#ffffff' }}>Sim</span>
+                                                    <span className="badge rounded-pill bg-success-soft">Sim</span>
                                                 ) : (
-                                                    <span className="badge" style={{ backgroundColor: '#30363d', color: '#8b949e' }}>Não</span>
+                                                    <span className="badge rounded-pill bg-muted-soft">Não</span>
                                                 )}
                                             </td>
-                                            <td style={{ verticalAlign: 'middle', padding: '1rem', textAlign: 'right' }}>
+                                            <td className="py-3 text-end">
                                                 <button
                                                     onClick={() => handleEditar(empresa)}
-                                                    className="btn btn-sm btn-link"
-                                                    style={{ color: '#58a6ff', textDecoration: 'none' }}
+                                                    className="btn btn-link btn-link-accent"
                                                     title="Editar"
                                                 >✏️</button>
                                                 <button
                                                     onClick={() => handleDeletar(empresa.id)}
-                                                    className="btn btn-sm btn-link"
-                                                    style={{ color: '#da3633', textDecoration: 'none' }}
+                                                    className="btn btn-link btn-link-danger"
                                                     title="Excluir"
                                                 >🗑️</button>
                                             </td>
@@ -139,7 +132,6 @@ function PaginaEmpresa() {
                 </div>
             )}
 
-            
             {showModal && (
                 <ModalEmpresa
                     item={empresaEmEdicao}
@@ -150,8 +142,7 @@ function PaginaEmpresa() {
                     }}
                 />
             )}
-
-        </div>
+        </section>
     );
 }
 
