@@ -67,10 +67,17 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                 style={{ backgroundColor: '#161b22', border: '1px solid #30363d', width: '600px' }}
                 onClick={e => e.stopPropagation()}
             >
-                <div className="card-header py-3" style={{ backgroundColor: '#1f6feb', border: 'none' }}>
+                <div className="card-header d-flex justify-content-between align-items-center py-3" style={{ backgroundColor: '#1f6feb', border: 'none' }}>
                     <h4 className="mb-0 fw-bold text-white">
                         {item ? 'Editar Empresa' : 'Adicionar Empresa'}
                     </h4>
+                    <button
+                        type="button"
+                        className="btn-close btn-close-white"
+                        aria-label="Fechar"
+                        onClick={onClose}
+                        disabled={loading}
+                    />
                 </div>
 
                 <form onSubmit={handleSubmit}>
@@ -89,23 +96,26 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                             />
                         </div>
 
-                        <div className="row g-2">
-                            <div className="col-6">
+                        <div className="row g-3 g-sm-2">
+                            <div className="col-12 col-sm-6">
                                 <label className="form-label small fw-semibold" style={{ color: '#c9d1d9' }}>CNPJ</label>
                                 <input
                                     name="cnpj"
-                                    type="text" className="form-control"
+                                    type="text"
+                                    className="form-control"
                                     style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                                     value={formData.cnpj}
                                     onChange={handleChange}
-                                    required placeholder="00.000.000/0001-00"
+                                    required
+                                    placeholder="00.000.000/0001-00"
                                 />
                             </div>
-                            <div className="col-6">
+                            <div className="col-12 col-sm-6">
                                 <label className="form-label small fw-semibold" style={{ color: '#c9d1d9' }}>Inscrição Estadual</label>
                                 <input
                                     name="inscricaoEstadual"
-                                    type="text" className="form-control"
+                                    type="text"
+                                    className="form-control"
                                     style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                                     value={formData.inscricaoEstadual}
                                     onChange={handleChange}
@@ -118,7 +128,8 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                             <label className="form-label fw-semibold small" style={{ color: '#c9d1d9' }}>Endereço Completo</label>
                             <input
                                 name="enderecoCompleto"
-                                type="text" className="form-control"
+                                type="text"
+                                className="form-control"
                                 style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                                 value={formData.enderecoCompleto}
                                 onChange={handleChange}
@@ -143,12 +154,40 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                         </div>
 
                     </div>
-                    <div className="card-footer border-0 p-4" style={{ backgroundColor: '#161b22', borderTop: '1px solid #30363d' }}>
-                        <div className="d-flex justify-content-end gap-2">
-                            <button type="button" className="btn btn-outline-secondary" onClick={onClose} disabled={loading}>
+                    <div
+                        className="card-footer border-0 p-4"
+                        style={{
+                            background: 'linear-gradient(90deg, rgba(13,17,23,1) 0%, rgba(13,17,23,0.95) 100%)',
+                            borderTop: '1px solid #30363d',
+                            boxShadow: '0 -12px 32px rgba(13,17,23,0.85)'
+                        }}
+                    >
+                        <div className="d-flex flex-column flex-sm-row justify-content-end gap-2 flex-wrap">
+                            <button
+                                type="button"
+                                className="btn px-4 py-2"
+                                onClick={onClose}
+                                disabled={loading}
+                                style={{
+                                    backgroundColor: 'transparent',
+                                    color: '#c9d1d9',
+                                    borderColor: '#8b949e',
+                                    boxShadow: '0 0 0 1px rgba(139, 148, 158, 0.6) inset'
+                                }}
+                            >
                                 Cancelar
                             </button>
-                            <button type="submit" className="btn btn-primary" disabled={loading}>
+                            <button
+                                type="submit"
+                                className="btn px-4 py-2"
+                                disabled={loading}
+                                style={{
+                                    backgroundColor: '#238636',
+                                    color: '#f0f6fc',
+                                    borderColor: '#2ea043',
+                                    boxShadow: '0 0 12px rgba(46, 160, 67, 0.45)'
+                                }}
+                            >
                                 {loading ? 'Salvando...' : 'Salvar'}
                             </button>
                         </div>
