@@ -17,7 +17,13 @@ const ItemLinha = ({ label, details, onEdit, onDelete }) => (
       <button
         onClick={onEdit}
         className="btn btn-sm btn-link"
-        style={{ color: '#58a6ff', textDecoration: 'none' }}
+        style={{
+          color: '#58a6ff',
+          textDecoration: 'none',
+          outline: 'none',
+          boxShadow: 'none',
+          border: 'none',
+        }}
         title="Editar"
       >
         ✏️
@@ -25,7 +31,13 @@ const ItemLinha = ({ label, details, onEdit, onDelete }) => (
       <button
         onClick={onDelete}
         className="btn btn-sm btn-link"
-        style={{ color: '#da3633', textDecoration: 'none' }}
+        style={{
+          color: '#da3633',
+          textDecoration: 'none',
+          outline: 'none',
+          boxShadow: 'none',
+          border: 'none',
+        }}
         title="Excluir"
       >
         🗑️
