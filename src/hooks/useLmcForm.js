@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import * as api from '../services/api';
 
 const defaultDate = new Date().toISOString().split('T')[0];
@@ -20,15 +20,34 @@ export const useLmcForm = () => {
   const [folhaCarregada, setFolhaCarregada] = useState(null);
   const [filters, setFilters] = useState(initialFilters);
   const [status, setStatus] = useState(initialStatus);
+  const prerequisitesCacheRef = useRef(new Map());
+  const prerequisitesPromiseRef = useRef(new Map());
+  const activeRequestIdRef = useRef(0);
 
   const updateStatus = useCallback((updates) => {
-    setStatus((previous) => ({ ...previous, ...updates }));
+    setStatus((previous) => {
+      const next = { ...previous, ...updates };
+
+      if (previous.loading === next.loading && previous.error === next.error) {
+        return previous;
+      }
+
+      return next;
+    });
   }, []);
 
   const clearError = useCallback(() => updateStatus({ error: null }), [updateStatus]);
 
   const updateFilters = useCallback((updates) => {
-    setFilters((previous) => ({ ...previous, ...updates }));
+    setFilters((previous) => {
+      const next = { ...previous, ...updates };
+
+      if (previous.data === next.data && previous.produtoId === next.produtoId) {
+        return previous;
+      }
+
+      return next;
+    });
   }, []);
 
   const fetchProdutos = useCallback(async () => {
@@ -45,29 +64,67 @@ export const useLmcForm = () => {
     fetchProdutos();
   }, [fetchProdutos]);
 
-  const fetchPrerequisitos = useCallback(async (produtoId) => {
-    const tanquesResponse = await api.getTanquesPorProduto(produtoId);
-    const tanquesData = tanquesResponse.data;
-    const tanquesValidos = tanquesData.filter((tanque) => Boolean(tanque?.id));
+  const fetchPrerequisitos = useCallback(async (produtoId, { forceRefresh = false } = {}) => {
+    const cache = prerequisitesCacheRef.current;
+    const promiseCache = prerequisitesPromiseRef.current;
 
-    if (tanquesValidos.length === 0) {
-      return { tanques: tanquesData, bicos: [] };
+    if (forceRefresh) {
+      cache.delete(produtoId);
+      promiseCache.delete(produtoId);
     }
 
-    const bicosPorTanque = await Promise.all(
-      tanquesValidos.map(async (tanque) => {
-        const response = await api.getBicosPorTanque(tanque.id);
-        return response.data.map((bico) => ({
-          ...bico,
-          nomeTanque: tanque.numero,
-        }));
-      })
-    );
+    if (cache.has(produtoId)) {
+      const cached = cache.get(produtoId);
+      return {
+        tanques: [...cached.tanques],
+        bicos: [...cached.bicos],
+      };
+    }
 
-    return { tanques: tanquesData, bicos: bicosPorTanque.flat() };
+    if (promiseCache.has(produtoId)) {
+      return promiseCache.get(produtoId);
+    }
+
+    const fetchPromise = (async () => {
+      const tanquesResponse = await api.getTanquesPorProduto(produtoId);
+      const tanquesData = tanquesResponse.data;
+      const tanquesValidos = tanquesData.filter((tanque) => Boolean(tanque?.id));
+
+      if (tanquesValidos.length === 0) {
+        const resultadoVazio = { tanques: [...tanquesData], bicos: [] };
+        cache.set(produtoId, resultadoVazio);
+        promiseCache.delete(produtoId);
+        return {
+          tanques: [...resultadoVazio.tanques],
+          bicos: [],
+        };
+      }
+
+      const bicosPorTanque = await Promise.all(
+        tanquesValidos.map(async (tanque) => {
+          const response = await api.getBicosPorTanque(tanque.id);
+          return response.data.map((bico) => ({
+            ...bico,
+            nomeTanque: tanque.numero,
+          }));
+        })
+      );
+
+      const bicosList = bicosPorTanque.flat();
+      const resultado = { tanques: [...tanquesData], bicos: [...bicosList] };
+      cache.set(produtoId, resultado);
+      promiseCache.delete(produtoId);
+      return {
+        tanques: [...resultado.tanques],
+        bicos: [...resultado.bicos],
+      };
+    })();
+
+    promiseCache.set(produtoId, fetchPromise);
+    return fetchPromise;
   }, []);
 
-  const fetchFolha = useCallback(async () => {
+  const fetchFolha = useCallback(async ({ forceRefresh = false } = {}) => {
     const { data, produtoId } = filters;
 
     if (!data || !produtoId) {
@@ -78,17 +135,35 @@ export const useLmcForm = () => {
       return;
     }
 
+    const requestId = activeRequestIdRef.current + 1;
+    activeRequestIdRef.current = requestId;
     updateStatus({ loading: true, error: null });
 
     try {
-      const { tanques: tanquesData, bicos: bicosData } = await fetchPrerequisitos(produtoId);
-      setTanques(tanquesData);
-      setBicos(bicosData);
+      const { tanques: tanquesData, bicos: bicosData } = await fetchPrerequisitos(produtoId, {
+        forceRefresh,
+      });
+
+      if (activeRequestIdRef.current !== requestId) {
+        return;
+      }
+
+      setTanques(() => [...tanquesData]);
+      setBicos(() => [...bicosData]);
 
       const response = await api.getFolha(data, produtoId);
+
+      if (activeRequestIdRef.current !== requestId) {
+        return;
+      }
+
       setFolhaCarregada(response.data);
       updateStatus({ loading: false });
     } catch (error) {
+      if (activeRequestIdRef.current !== requestId) {
+        return;
+      }
+
       if (error.response?.status === 404) {
         updateStatus({ loading: false });
         setFolhaCarregada(null);
@@ -104,9 +179,10 @@ export const useLmcForm = () => {
     fetchFolha();
   }, [fetchFolha]);
 
-  const refreshFolha = useCallback(() => {
-    fetchFolha();
-  }, [fetchFolha]);
+  const refreshFolha = useCallback(
+    (options = {}) => fetchFolha({ ...options, forceRefresh: true }),
+    [fetchFolha]
+  );
 
   return {
     produtos,
