@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import * as api from '../services/api';
 import { toast } from 'react-hot-toast';
 
 function ModalEmpresa({ item, onClose, onSalvar }) {
+    const idPrefix = useId();
     const [formData, setFormData] = useState({
         razaoSocial: item ? item.razaoSocial : '',
         cnpj: item ? item.cnpj : '',
@@ -88,11 +89,18 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                         {error && <div className="alert alert-danger">{error}</div>}
 
                         <div className="mb-3">
-                            <label className="form-label fw-semibold small" style={{ color: '#c9d1d9' }}>Razão Social</label>
+                            <label
+                                className="form-label fw-semibold small"
+                                style={{ color: '#c9d1d9' }}
+                                htmlFor={`${idPrefix}-razaoSocial`}
+                            >
+                                Razão Social
+                            </label>
                             <input
                                 name="razaoSocial"
                                 type="text" className="form-control"
                                 style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
+                                id={`${idPrefix}-razaoSocial`}
                                 value={formData.razaoSocial}
                                 onChange={handleChange}
                                 required
@@ -101,12 +109,19 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
 
                         <div className="row g-3 g-sm-2">
                             <div className="col-12 col-sm-6">
-                                <label className="form-label small fw-semibold" style={{ color: '#c9d1d9' }}>CNPJ</label>
+                                <label
+                                    className="form-label small fw-semibold"
+                                    style={{ color: '#c9d1d9' }}
+                                    htmlFor={`${idPrefix}-cnpj`}
+                                >
+                                    CNPJ
+                                </label>
                                 <input
                                     name="cnpj"
                                     type="text"
                                     className="form-control"
                                     style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
+                                    id={`${idPrefix}-cnpj`}
                                     value={formData.cnpj}
                                     onChange={handleChange}
                                     required
@@ -114,12 +129,19 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                                 />
                             </div>
                             <div className="col-12 col-sm-6">
-                                <label className="form-label small fw-semibold" style={{ color: '#c9d1d9' }}>Inscrição Estadual</label>
+                                <label
+                                    className="form-label small fw-semibold"
+                                    style={{ color: '#c9d1d9' }}
+                                    htmlFor={`${idPrefix}-inscricaoEstadual`}
+                                >
+                                    Inscrição Estadual
+                                </label>
                                 <input
                                     name="inscricaoEstadual"
                                     type="text"
                                     className="form-control"
                                     style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
+                                    id={`${idPrefix}-inscricaoEstadual`}
                                     value={formData.inscricaoEstadual}
                                     onChange={handleChange}
                                     placeholder="Opcional"
@@ -128,12 +150,19 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                         </div>
 
                         <div className="mb-3 mt-3">
-                            <label className="form-label fw-semibold small" style={{ color: '#c9d1d9' }}>Endereço Completo</label>
+                            <label
+                                className="form-label fw-semibold small"
+                                style={{ color: '#c9d1d9' }}
+                                htmlFor={`${idPrefix}-enderecoCompleto`}
+                            >
+                                Endereço Completo
+                            </label>
                             <input
                                 name="enderecoCompleto"
                                 type="text"
                                 className="form-control"
                                 style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
+                                id={`${idPrefix}-enderecoCompleto`}
                                 value={formData.enderecoCompleto}
                                 onChange={handleChange}
                                 required
@@ -146,14 +175,24 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                                 name="isAtiva"
                                 type="checkbox"
                                 className="form-check-input"
-                                id="isAtivaCheck"
+                                id={`${idPrefix}-isAtivaCheck`}
                                 checked={formData.isAtiva}
                                 onChange={handleChange}
+                                aria-describedby={`${idPrefix}-ativaHint`}
                             />
-                            <label className="form-check-label" htmlFor="isAtivaCheck" style={{ color: '#c9d1d9' }}>
+                            <label
+                                className="form-check-label"
+                                htmlFor={`${idPrefix}-isAtivaCheck`}
+                                style={{ color: '#c9d1d9' }}
+                            >
                                 Empresa ativa para os relatórios?
                             </label>
-                            <small className="d-block text-muted">Apenas uma empresa pode estar ativa por vez.</small>
+                            <small
+                                id={`${idPrefix}-ativaHint`}
+                                className="d-block text-muted"
+                            >
+                                Apenas uma empresa pode estar ativa por vez.
+                            </small>
                         </div>
 
                     </div>
