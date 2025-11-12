@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getRelatorio } from '../services/api';
 
 function Relatorio() {
@@ -13,7 +13,7 @@ function Relatorio() {
       .split('T')[0]
   );
 
-  const handleBuscarRelatorio = () => {
+  const handleBuscarRelatorio = useCallback(() => {
     setLoading(true);
     setError(null);
     setRelatorios([]);
@@ -28,11 +28,11 @@ function Relatorio() {
         setError("Não foi possível carregar o relatório.");
         setLoading(false);
       });
-  };
+  }, [dataFim, dataInicio]);
 
   useEffect(() => {
     handleBuscarRelatorio();
-  }, []);
+  }, [handleBuscarRelatorio]);
 
   const formatarData = (dataString) => {
     if (!dataString) return 'N/A';
