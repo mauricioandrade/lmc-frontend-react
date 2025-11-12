@@ -82,7 +82,7 @@ function PaginaEmpresa() {
             )}
 
             {!loading && !error && (
-                <div className="card surface-card">
+                <div className="card surface-card" style={{ borderRadius: 0 }}>
                     <div className="card-body p-0">
                         <div className="table-responsive">
                             <table className="table table-dark table-hover mb-0 align-middle">

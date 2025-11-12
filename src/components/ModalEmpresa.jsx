@@ -69,7 +69,8 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 1050,
-        padding: '1.5rem'
+        padding: '1rem',
+        overflow: 'auto'
     };
 
     return (
@@ -79,11 +80,9 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                 style={{
                     backgroundColor: '#161b22',
                     border: '1px solid #30363d',
-                    width: '600px',
-                    maxWidth: '100%',
-                    maxHeight: '90vh',
-                    display: 'flex',
-                    flexDirection: 'column'
+                    width: '100%',
+                    maxWidth: '600px',
+                    margin: 'auto'
                 }}
                 onClick={e => e.stopPropagation()}
             >
@@ -100,8 +99,8 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                     />
                 </div>
 
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                    <div className="card-body p-4" style={{ overflowY: 'auto', flex: 1 }}>
+                <form onSubmit={handleSubmit}>
+                    <div className="card-body p-4">
                         {error && <div className="alert alert-danger">{error}</div>}
 
                         <div className="mb-3">
@@ -114,7 +113,8 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                             </label>
                             <input
                                 name="razaoSocial"
-                                type="text" className="form-control"
+                                type="text" 
+                                className="form-control"
                                 style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
                                 id={`${idPrefix}-razaoSocial`}
                                 value={formData.razaoSocial}
@@ -210,17 +210,16 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                                 Apenas uma empresa pode estar ativa por vez.
                             </small>
                         </div>
-
                     </div>
+                    
                     <div
                         className="card-footer border-0 p-4"
                         style={{
-                            background: 'linear-gradient(90deg, rgba(13,17,23,1) 0%, rgba(13,17,23,0.95) 100%)',
-                            borderTop: '1px solid #30363d',
-                            boxShadow: '0 -12px 32px rgba(13,17,23,0.85)'
+                            backgroundColor: '#0d1117',
+                            borderTop: '1px solid #30363d'
                         }}
                     >
-                        <div className="d-flex flex-column flex-sm-row justify-content-end gap-2 flex-wrap">
+                        <div className="d-flex justify-content-end gap-2">
                             <button
                                 type="button"
                                 className="btn px-4 py-2"
@@ -229,8 +228,7 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                                 style={{
                                     backgroundColor: 'transparent',
                                     color: '#c9d1d9',
-                                    borderColor: '#8b949e',
-                                    boxShadow: '0 0 0 1px rgba(139, 148, 158, 0.6) inset'
+                                    border: '1px solid #8b949e'
                                 }}
                             >
                                 Cancelar
@@ -241,9 +239,8 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                                 disabled={loading}
                                 style={{
                                     backgroundColor: '#238636',
-                                    color: '#f0f6fc',
-                                    borderColor: '#2ea043',
-                                    boxShadow: '0 0 12px rgba(46, 160, 67, 0.45)'
+                                    color: '#ffffff',
+                                    border: '1px solid #2ea043'
                                 }}
                             >
                                 {loading ? 'Salvando...' : 'Salvar'}
@@ -254,6 +251,6 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
             </div>
         </div>
     );
-};
+}
 
 export default ModalEmpresa;
