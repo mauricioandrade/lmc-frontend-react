@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as api from '../services/api';
 import { toast } from 'react-hot-toast';
 
@@ -12,6 +12,16 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    useEffect(() => {
+        setFormData({
+            razaoSocial: item ? item.razaoSocial : '',
+            cnpj: item ? item.cnpj : '',
+            inscricaoEstadual: item ? item.inscricaoEstadual : '',
+            enderecoCompleto: item ? item.enderecoCompleto : '',
+            isAtiva: item ? !!item.isAtiva : false
+        });
+    }, [item]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
