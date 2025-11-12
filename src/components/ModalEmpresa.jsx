@@ -59,16 +59,32 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
     };
 
     const modalOverlayStyle = {
-        position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-        backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex',
-        alignItems: 'center', justifyContent: 'center', zIndex: 1050
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1050,
+        padding: '1.5rem'
     };
 
     return (
         <div style={modalOverlayStyle} onClick={onClose}>
             <div
                 className="card shadow-lg rounded-4"
-                style={{ backgroundColor: '#161b22', border: '1px solid #30363d', width: '600px' }}
+                style={{
+                    backgroundColor: '#161b22',
+                    border: '1px solid #30363d',
+                    width: '600px',
+                    maxWidth: '100%',
+                    maxHeight: '90vh',
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}
                 onClick={e => e.stopPropagation()}
             >
                 <div className="card-header d-flex justify-content-between align-items-center py-3" style={{ backgroundColor: '#1f6feb', border: 'none' }}>
@@ -84,8 +100,8 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
                     />
                 </div>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="card-body p-4">
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <div className="card-body p-4" style={{ overflowY: 'auto', flex: 1 }}>
                         {error && <div className="alert alert-danger">{error}</div>}
 
                         <div className="mb-3">
