@@ -97,7 +97,7 @@ function PaginaProdutos() {
             {isLoading && <p className="text-muted">Carregando produtos...</p>}
 
             {!isLoading && !errorMessage && (
-                <div className="card surface-card">
+                <div className="card surface-card" style={{ borderRadius: 0 }}>
                     <div className="card-body p-0">
                         <table className="table table-dark table-hover mb-0 align-middle">
                             <thead>
