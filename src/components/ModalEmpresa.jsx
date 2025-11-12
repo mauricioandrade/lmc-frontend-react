@@ -37,9 +37,12 @@ function ModalEmpresa({ item, onClose, onSalvar }) {
         setError(null);
 
         const empresaData = {
-            id: item ? item.id : null,
             ...formData
         };
+
+        if (item?.id) {
+            empresaData.id = item.id;
+        }
 
         try {
             await api.salvarEmpresa(empresaData);
