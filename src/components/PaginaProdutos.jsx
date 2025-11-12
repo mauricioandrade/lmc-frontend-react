@@ -1,161 +1,102 @@
-import React, { useState, useEffect } from 'react';
-import * as api from '../services/api';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
-
-const ModalProduto = ({ item, onClose, onSalvar }) => {
-    const [nome, setNome] = useState(item ? item.nome : '');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
-
-        const produtoData = {
-            id: item ? item.id : null,
-            nome: nome
-        };
-
-        try {
-            await api.salvarProduto(produtoData);
-            toast.success(`Produto ${item ? 'atualizado' : 'criado'} com sucesso!`);
-            onSalvar();
-            onClose();
-        } catch (error) {
-            console.error("Erro ao salvar produto:", error);
-            setError(error.response?.data?.message || "Falha ao salvar produto.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const modalOverlayStyle = {
-        position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-        backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex',
-        alignItems: 'center', justifyContent: 'center', zIndex: 1050
-    };
-
-    return (
-        <div style={modalOverlayStyle} onClick={onClose}>
-            <div
-                className="card shadow-lg rounded-4"
-                style={{ backgroundColor: '#161b22', border: '1px solid #30363d', width: '500px' }}
-                onClick={e => e.stopPropagation()}
-            >
-                <div className="card-header py-3" style={{ backgroundColor: '#1f6feb', border: 'none' }}>
-                    <h4 className="mb-0 fw-bold text-white">
-                        {item ? 'Editar Produto' : 'Adicionar Produto'}
-                    </h4>
-                </div>
-
-                <form onSubmit={handleSubmit}>
-                    <div className="card-body p-4">
-                        {error && <div className="alert alert-danger">{error}</div>}
-
-                        <div className="mb-3">
-                            <label className="form-label fw-semibold small" style={{ color: '#c9d1d9' }}>Nome do Produto</label>
-                            <input
-                                name="nome"
-                                type="text" className="form-control"
-                                style={{ backgroundColor: '#0d1117', color: '#c9d1d9', border: '1px solid #30363d' }}
-                                value={nome}
-                                onChange={(e) => setNome(e.target.value)}
-                                required
-                                placeholder="Ex: Gasolina Aditivada"
-                            />
-                        </div>
-                    </div>
-                    <div className="card-footer border-0 p-4" style={{ backgroundColor: '#161b22', borderTop: '1px solid #30363d' }}>
-                        <div className="d-flex justify-content-end gap-2">
-                            <button type="button" className="btn btn-outline-secondary" onClick={onClose} disabled={loading}>
-                                Cancelar
-                            </button>
-                            <button type="submit" className="btn btn-primary" disabled={loading}>
-                                {loading ? 'Salvando...' : 'Salvar'}
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    );
-};
-
+import ModalProduto from './ModalProduto';
+import { deletarProduto, getProdutos, salvarProduto } from '../services/api';
 
 function PaginaProdutos() {
     const [produtos, setProdutos] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState(null);
+    const [produtoSelecionado, setProdutoSelecionado] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const [showModal, setShowModal] = useState(false);
-    const [produtoEmEdicao, setProdutoEmEdicao] = useState(null);
+    const carregarProdutos = useCallback(async () => {
+        setIsLoading(true);
+        setErrorMessage(null);
 
-    const fetchProdutos = () => {
-        setLoading(true);
-        api.getProdutos()
-            .then(response => {
-                setProdutos(response.data);
-                setError(null);
-            })
-            .catch(err => {
-                console.error("Erro ao buscar produtos:", err);
-                setError("Não foi possível carregar os produtos.");
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
-
-    useEffect(() => {
-        fetchProdutos();
+        try {
+            const response = await getProdutos();
+            setProdutos(response.data);
+        } catch (error) {
+            console.error('Erro ao buscar produtos:', error);
+            setErrorMessage('Não foi possível carregar os produtos.');
+        } finally {
+            setIsLoading(false);
+        }
     }, []);
 
-    const handleAdicionar = () => {
-        setProdutoEmEdicao(null);
-        setShowModal(true);
-    };
+    useEffect(() => {
+        carregarProdutos();
+    }, [carregarProdutos]);
 
-    const handleEditar = (produto) => {
-        setProdutoEmEdicao(produto);
-        setShowModal(true);
-    };
+    const abrirModal = useCallback((produto = null) => {
+        setProdutoSelecionado(produto);
+        setIsModalOpen(true);
+    }, []);
 
-    const handleDeletar = async (id) => {
-        if (!window.confirm("Tem certeza que deseja excluir este produto?")) {
+    const fecharModal = useCallback(() => {
+        setIsModalOpen(false);
+        setProdutoSelecionado(null);
+    }, []);
+
+    const handleSubmitProduto = useCallback(async ({ id, nome }) => {
+        try {
+            await salvarProduto({ id, nome });
+            toast.success(`Produto ${id ? 'atualizado' : 'criado'} com sucesso!`);
+            await carregarProdutos();
+        } catch (error) {
+            console.error('Erro ao salvar produto:', error);
+            const message = error?.response?.data?.message || 'Falha ao salvar produto.';
+            throw new Error(message);
+        }
+    }, [carregarProdutos]);
+
+    const handleDeleteProduto = useCallback(async (id) => {
+        const shouldDelete = window.confirm('Tem certeza que deseja excluir este produto?');
+
+        if (!shouldDelete) {
             return;
         }
+
         try {
-            await api.deletarProduto(id);
-            toast.success("Produto excluído com sucesso!");
-            fetchProdutos();
+            await deletarProduto(id);
+            toast.success('Produto excluído com sucesso!');
+            await carregarProdutos();
         } catch (error) {
-            console.error("Erro ao deletar produto:", error);
-            toast.error(error.response?.data?.message || "Falha ao excluir produto.");
+            console.error('Erro ao deletar produto:', error);
+            const message = error?.response?.data?.message || 'Falha ao excluir produto.';
+            toast.error(message);
         }
-    };
+    }, [carregarProdutos]);
+
+    const produtosOrdenados = useMemo(
+        () => [...produtos].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR')),
+        [produtos]
+    );
 
     return (
         <section className="page-section">
             <div className="page-toolbar">
                 <div className="page-toolbar__content">
-                    <h2 className="page-section__title page-section__title--secondary mb-1">Gerenciamento de Produtos</h2>
+                    <h2 className="page-section__title page-section__title--secondary mb-1">
+                        Gerenciamento de Produtos
+                    </h2>
                     <p className="page-section__subtitle page-section__subtitle--left">
                         Organize os itens comercializados e mantenha o catálogo sempre atualizado.
                     </p>
                 </div>
                 <button
-                    onClick={handleAdicionar}
+                    onClick={() => abrirModal()}
                     className="btn btn-outline-accent page-toolbar__action"
                 >
                     + Adicionar Produto
                 </button>
             </div>
 
-            {error && <div className="alert alert-danger">{error}</div>}
-            {loading && <p className="text-muted">Carregando produtos...</p>}
+            {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+            {isLoading && <p className="text-muted">Carregando produtos...</p>}
 
-            {!loading && !error && (
+            {!isLoading && !errorMessage && (
                 <div className="card surface-card">
                     <div className="card-body p-0">
                         <table className="table table-dark table-hover mb-0 align-middle">
@@ -167,26 +108,32 @@ function PaginaProdutos() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {produtos.length === 0 && (
+                                {produtosOrdenados.length === 0 && (
                                     <tr>
-                                        <td colSpan="3" className="text-center py-4">Nenhum produto cadastrado.</td>
+                                        <td colSpan="3" className="text-center py-4">
+                                            Nenhum produto cadastrado.
+                                        </td>
                                     </tr>
                                 )}
-                                {produtos.map(produto => (
+                                {produtosOrdenados.map((produto) => (
                                     <tr key={produto.id}>
                                         <td className="py-3">{produto.id}</td>
                                         <td className="py-3">{produto.nome}</td>
                                         <td className="py-3 text-end">
                                             <button
-                                                onClick={() => handleEditar(produto)}
+                                                onClick={() => abrirModal(produto)}
                                                 className="btn btn-link btn-link-accent"
                                                 title="Editar"
-                                            >✏️</button>
+                                            >
+                                                ✏️
+                                            </button>
                                             <button
-                                                onClick={() => handleDeletar(produto.id)}
+                                                onClick={() => handleDeleteProduto(produto.id)}
                                                 className="btn btn-link btn-link-danger"
                                                 title="Excluir"
-                                            >🗑️</button>
+                                            >
+                                                🗑️
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
@@ -196,14 +143,11 @@ function PaginaProdutos() {
                 </div>
             )}
 
-            {showModal && (
+            {isModalOpen && (
                 <ModalProduto
-                    item={produtoEmEdicao}
-                    onClose={() => setShowModal(false)}
-                    onSalvar={() => {
-                        setShowModal(false);
-                        fetchProdutos();
-                    }}
+                    produto={produtoSelecionado}
+                    onClose={fecharModal}
+                    onSubmit={handleSubmitProduto}
                 />
             )}
         </section>
