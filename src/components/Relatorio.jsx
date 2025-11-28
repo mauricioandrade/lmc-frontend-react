@@ -22,26 +22,32 @@ function Relatorio() {
       .split('T')[0]
   );
 
-  const handleBuscarRelatorio = useCallback(() => {
+  const buscarRelatorio = useCallback((inicio, fim) => {
     setLoading(true);
     setError(null);
     setRelatorios([]);
 
-    getRelatorio(dataInicio, dataFim)
-      .then(response => {
+    getRelatorio(inicio, fim)
+      .then((response) => {
         setRelatorios(response.data || []);
         setLoading(false);
       })
-      .catch(err => {
-        console.error("Erro ao buscar relatório:", err);
-        setError("Não foi possível carregar o relatório.");
+      .catch((err) => {
+        console.error('Erro ao buscar relatório:', err);
+        setError('Não foi possível carregar o relatório.');
         setLoading(false);
       });
-  }, [dataFim, dataInicio]);
+  }, []);
 
   useEffect(() => {
-    handleBuscarRelatorio();
-  }, [handleBuscarRelatorio]);
+    buscarRelatorio(dataInicio, dataFim);
+    // Executa apenas na montagem para evitar requisições duplicadas ao alterar filtros
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleBuscarRelatorio = useCallback(() => {
+    buscarRelatorio(dataInicio, dataFim);
+  }, [buscarRelatorio, dataFim, dataInicio]);
 
   const exportarPdfUrl = useMemo(
     () => `http://localhost:8080/api/lmc/relatorio/pdf?inicio=${dataInicio}&fim=${dataFim}`,
