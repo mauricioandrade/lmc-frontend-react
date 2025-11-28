@@ -18,9 +18,9 @@ function App() {
           </main>
           <footer className="app-footer">
             <p className="app-footer__copyright">
-              &copy; {new Date().getFullYear()} Sistema LMC
+              &copy; {new Date().getFullYear()} Kairo LMC
             </p>
-            <p className="app-footer__tagline">Gestão inteligente para postos de combustível.</p>
+            <p className="app-footer__tagline">Language Model Computing com identidade Kairo.</p>
           </footer>
         </div>
       </div>

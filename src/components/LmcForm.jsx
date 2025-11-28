@@ -34,7 +34,7 @@ function LmcForm() {
   return (
     <section className="page-section">
       <div className="page-section__header">
-        <h1 className="page-section__title">📊 Sistema LMC</h1>
+        <h1 className="page-section__title">📊 Kairo LMC</h1>
         <p className="page-section__subtitle">
           Gestão de Leituras de Medição de Combustível com foco em clareza e produtividade.
         </p>

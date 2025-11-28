@@ -1,7 +1,7 @@
 # Arquitetura e Padrões Adotados
 
 ## Visão Geral
-Este documento descreve as principais decisões de arquitetura introduzidas para aprimorar a manutenibilidade do sistema LMC, seguindo princípios de Clean Code, SOLID e Design Patterns.
+Este documento descreve as principais decisões de arquitetura introduzidas para aprimorar a manutenibilidade do sistema Kairo LMC, seguindo princípios de Clean Code, SOLID e Design Patterns.
 
 ## Configuração de Toasts
 - **Arquivo:** `src/config/toastConfig.js`

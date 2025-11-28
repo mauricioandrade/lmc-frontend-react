@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Kairo LMC Logo">
+  <defs>
+    <linearGradient id="kairo-grad-outer" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00d4ff" />
+      <stop offset="100%" stop-color="#0066ff" />
+    </linearGradient>
+    <linearGradient id="kairo-grad-inner" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#0066ff" stop-opacity="0.85" />
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke-width="3">
+    <path d="M100 10 170 50v80l-70 40-70-40V50Z" stroke="url(#kairo-grad-outer)" />
+    <path d="M100 40 145 65v50l-45 25-45-25V65Z" fill="url(#kairo-grad-inner)" opacity="0.3" />
+  </g>
+  <path d="M85 70v40m0-20 25-20m-25 20 25 20" stroke="#00d4ff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <circle cx="100" cy="90" r="34" fill="none" stroke="url(#kairo-grad-inner)" stroke-width="2" opacity="0.45" />
+  <circle cx="70" cy="90" r="5" fill="#00d4ff" />
+  <circle cx="130" cy="90" r="5" fill="#0066ff" />
+</svg>

@@ -1,6 +1,6 @@
-# 🌐 LMC Front-end
+# 🌐 Kairo LMC Front-end
 
-O **LMC Front-end** é a camada de apresentação do ecossistema **LMC**, responsável por traduzir as funcionalidades expostas pelo serviço de back-end em uma experiência visual intuitiva, acessível e responsiva. Ele permite que os usuários interajam com os recursos do sistema de maneira rápida e segura, entregando valor ao negócio por meio de interfaces amigáveis.
+O **Kairo LMC Front-end** é a camada de apresentação do ecossistema **Kairo LMC**, responsável por traduzir as funcionalidades expostas pelo serviço de back-end em uma experiência visual intuitiva, acessível e responsiva. Ele permite que os usuários interajam com os recursos do sistema de maneira rápida e segura, entregando valor ao negócio por meio de interfaces amigáveis.
 
 ## 🧠 Por que este front-end existe?
 
@@ -53,7 +53,7 @@ O **LMC Front-end** é a camada de apresentação do ecossistema **LMC**, respon
 ## 📦 Deploy e ambientes
 
 - **Desenvolvimento:** via `npm run dev`.
-- **Homologação/Produção:** utilize o artefato de `npm run build` integrado ao pipeline do ecossistema LMC (configure o servidor para servir o diretório `dist/`).
+- **Homologação/Produção:** utilize o artefato de `npm run build` integrado ao pipeline do ecossistema Kairo LMC (configure o servidor para servir o diretório `dist/`).
 
 ## 📚 Recursos adicionais
 
@@ -62,4 +62,4 @@ O **LMC Front-end** é a camada de apresentação do ecossistema **LMC**, respon
 - [Guia do ESLint](https://eslint.org/docs/latest/)
 - [Guia de CSS Modules](https://github.com/css-modules/css-modules)
 
-Mantenha-se atento às boas práticas e continue evoluindo o front-end para oferecer a melhor experiência aos usuários do LMC! 💙
+Mantenha-se atento às boas práticas e continue evoluindo o front-end para oferecer a melhor experiência aos usuários do Kairo LMC! 💙
