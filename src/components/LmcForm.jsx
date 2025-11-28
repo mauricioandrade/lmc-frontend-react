@@ -106,10 +106,10 @@ function LmcForm() {
           {!loading && !folhaCarregada && filters.produtoId && (
             <FormularioCriacao
               produtoId={filters.produtoId}
-              dataSelecionada={filters.data}
+              data={filters.data}
               tanques={tanques}
               bicos={bicos}
-              onAtualizar={handleAtualizacao}
+              onSalvar={handleAtualizacao}
             />
           )}
 
