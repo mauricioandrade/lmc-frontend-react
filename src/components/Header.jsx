@@ -33,7 +33,6 @@ function Header() {
             <span className="app-navbar__brand-badge">K</span>
             <span className="app-navbar__brand-text">Kairo LMC</span>
           </Link>
-          <span className="app-navbar__badge">Console</span>
         </div>
 
         <button
