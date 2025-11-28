@@ -30,10 +30,10 @@ function Header() {
       <nav className="app-navbar" aria-label="Navegação principal">
         <div className="app-navbar__brand-group">
           <Link className="app-navbar__brand" to="/">
-            <span className="app-navbar__brand-badge">LMC</span>
-            <span className="app-navbar__brand-text">Sistema de Controle</span>
+            <span className="app-navbar__brand-badge">K</span>
+            <span className="app-navbar__brand-text">Kairo LMC</span>
           </Link>
-          <span className="app-navbar__badge">Dashboard</span>
+          <span className="app-navbar__badge">Console</span>
         </div>
 
         <button
