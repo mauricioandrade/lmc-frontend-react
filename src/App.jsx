@@ -20,7 +20,7 @@ function App() {
             <p className="app-footer__copyright">
               &copy; {new Date().getFullYear()} Kairo LMC
             </p>
-            <p className="app-footer__tagline">Language Model Computing com identidade Kairo.</p>
+            <p className="app-footer__tagline">Kairo Lmc - Desenvolvido por Mauricio Andrade</p>
           </footer>
         </div>
       </div>
