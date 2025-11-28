@@ -52,25 +52,6 @@
   line-height: 1.2;
 }
 
-.app-navbar__brand-text::after {
-  content: 'Language Model Computing';
-  font-size: 0.72rem;
-  font-weight: 500;
-  color: var(--text-muted);
-}
-
-.app-navbar__badge {
-  padding: 0.35rem 0.85rem;
-  border-radius: 999px;
-  background: rgba(0, 212, 255, 0.14);
-  border: 1px solid rgba(0, 212, 255, 0.35);
-  color: var(--accent-primary);
-  font-weight: 600;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
 .app-navbar__menu {
   display: flex;
   align-items: center;
@@ -167,10 +148,6 @@
   .app-navbar__toggler {
     display: flex;
     margin-left: auto;
-  }
-
-  .app-navbar__badge {
-    display: none;
   }
 }
 
