@@ -20,7 +20,16 @@ function App() {
             <p className="app-footer__copyright">
               &copy; {new Date().getFullYear()} Kairo LMC
             </p>
-            <p className="app-footer__tagline">Kairo Lmc - Desenvolvido por Mauricio Andrade</p>
+         <p className="app-footer__tagline">
+  Kairo LMC - Desenvolvido por{" "}
+  <a
+    href="https://github.com/mauricioandrade"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Mauricio Andrade
+  </a>
+</p>
           </footer>
         </div>
       </div>
